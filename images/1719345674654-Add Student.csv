@@ -1,0 +1,4 @@
+name,roll_no,batch,father_name,email,gender,dob,permanent_address,current_address,phone_no,guardian_no
+Studeunt1,123,2023-24,Father 1,email1@gmail.com,Male,12-03-2000,add1,add12,123456789,123456789
+Studeunt2,124,2023-24,Father 2,email2@gmail.com,FeMale,23-02-2039,add2,add22,123456789,123456789
+Studeunt3,125,2023-24,Father 3,email3@gmail.com,Male,14-04-2023,add3,add23,123456789,123456789
