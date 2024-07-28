@@ -79,7 +79,7 @@ export default {
             student_id: getStudentId._id,
             roll_no: jsonObj[x].roll_no,
             attendence_status: jsonObj[x].attendence_status,
-            a_date: jsonObj[x].a_date,
+            a_date:  moment(jsonObj[x].a_date).format('YYYY-MM-DD'),
             course_id: req.body.course_id,
             subject_id: req.body.subject_id,
             semester_id: req.body.semester_id,
