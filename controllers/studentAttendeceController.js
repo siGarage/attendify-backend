@@ -1,4 +1,5 @@
 import STUDENTATTENDENCE from "../models/studentAttendenceModel.js";
+import STUDENT from "../models/studentModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
 import moment from "moment";
@@ -71,8 +72,12 @@ export default {
       .fromFile(req.file.path)
       .then(async (jsonObj) => {
         for (var x = 0; x < jsonObj.length; x++) {
+          const getStudentId = await STUDENT.findOne({
+            roll_no: jsonObj[x]?.roll_no,
+          });
           csvData.push({
-            student_id: jsonObj[x].student_id,
+            student_id: getStudentId._id,
+            roll_no: jsonObj[x].roll_no,
             attendence_status: jsonObj[x].attendence_status,
             a_date: jsonObj[x].a_date,
             course_id: req.body.course_id,
