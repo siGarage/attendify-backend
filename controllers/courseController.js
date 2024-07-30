@@ -63,7 +63,9 @@ export default {
         return res.status(404).send({ message: "Course not found" });
       }
       await COURSE.findByIdAndUpdate(_id, request);
-      return res.status(201).send({ message: "Course updated successfully" });
+      return res
+        .status(201)
+        .send({ course_u: request, message: "Course updated successfully" });
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }

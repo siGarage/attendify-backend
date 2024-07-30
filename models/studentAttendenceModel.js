@@ -10,6 +10,10 @@ const StudentAttendenceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    roll_no: {
+      type: String,
+      required: true,
+    },
     course_id: {
       type: String,
       required: true,

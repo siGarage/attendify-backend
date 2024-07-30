@@ -47,7 +47,7 @@ export default {
   // Delete Subject
   async deleteSubject(req, res) {
     try {
-        let id = req.query.id;
+      let id = req.query.id;
       const subject = await SUBJECT.findByIdAndRemove(id);
       if (!subject) {
         return res.status(404).send({ message: "Subject not found." });
@@ -73,7 +73,9 @@ export default {
         return res.status(404).send({ message: "Subject not found" });
       }
       await SUBJECT.findByIdAndUpdate(_id, request);
-      return res.status(201).send({ message: "Subject updated successfully" });
+      return res
+        .status(201)
+        .send({ subject_u: request, message: "Subject updated successfully" });
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }

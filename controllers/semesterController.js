@@ -76,16 +76,11 @@ export default {
       if (!semester) {
         return res.status(404).send({ message: "Semester not found" });
       }
-      const exist = await SEMESTER.findOne({
-        $and: [{ course_id: request.course_id }, { number: request.number }],
-      });
-      if (exist) {
-        return res.status(403).send({
-          message: "This semester is already exist for this perticular course.",
-        });
-      }
       await SEMESTER.findByIdAndUpdate(_id, request);
-      return res.status(201).send({ message: "Semester updated successfully" });
+      return res.status(201).send({
+        semester_u: request,
+        message: "Semester updated successfully",
+      });
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }
