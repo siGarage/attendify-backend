@@ -79,7 +79,7 @@ export default {
             student_id: getStudentId._id,
             roll_no: jsonObj[x].roll_no,
             attendence_status: jsonObj[x].attendence_status,
-            a_date:  moment(jsonObj[x].a_date).format('YYYY-MM-DD'),
+            a_date: moment(jsonObj[x].a_date).format("YYYY-MM-DD"),
             course_id: req.body.course_id,
             subject_id: req.body.subject_id,
             semester_id: req.body.semester_id,
@@ -110,6 +110,20 @@ export default {
         }
       }
       return res.status(200).json(filteredData);
+    } catch (err) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  },
+
+  // Get Student Attendence List
+  async fetchTodayStudentAttendenceList(req, res) {
+    try {
+      let s_date = moment().format("YYYY-MM-DD");
+      console.log(s_date);
+      const result = await STUDENTATTENDENCE.find({
+        a_date: s_date,
+      });
+      return res.status(200).json(result);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }

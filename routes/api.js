@@ -373,4 +373,11 @@ Router.post("/createExam", upload.single("image"), examController.createExam);
 //Exam Get
 Router.get("/getExams", Authentication, examController.getExams);
 
+//Get Teacher Attendence By Id
+Router.get(
+  "/fetchTodayStudentAttendences",
+  Authentication,
+  StudentAttendenceController.fetchTodayStudentAttendenceList
+);
+
 export default Router;
