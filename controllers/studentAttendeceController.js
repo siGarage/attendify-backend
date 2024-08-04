@@ -119,11 +119,26 @@ export default {
   async fetchTodayStudentAttendenceList(req, res) {
     try {
       let s_date = moment().format("YYYY-MM-DD");
-      console.log(s_date);
       const result = await STUDENTATTENDENCE.find({
         a_date: s_date,
       });
       return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  },
+
+  // Get Student Attendence List
+  async fetchMonthlyAttendenceList(req, res) {
+    try {
+      const result = await STUDENTATTENDENCE.find().sort({ a_date: 1 });
+      let finalMonthlyData = [];
+      result.map((item) => {
+        if (moment(item?.a_date).format("MMMM") == req.body.month) {
+          finalMonthlyData.push(item);
+        }
+      });
+      return res.status(200).json(finalMonthlyData);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }

@@ -380,4 +380,10 @@ Router.get(
   StudentAttendenceController.fetchTodayStudentAttendenceList
 );
 
+Router.post(
+  "/fetchMonthlyAttendences",
+  Authentication,
+  StudentAttendenceController.fetchMonthlyAttendenceList
+);
+
 export default Router;
