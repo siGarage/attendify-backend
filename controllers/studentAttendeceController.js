@@ -130,15 +130,31 @@ export default {
 
   // Get Student Attendence List
   async fetchMonthlyAttendenceList(req, res) {
+    let desiredMonth = req.body.month;
     try {
-      const result = await STUDENTATTENDENCE.find().sort({ a_date: 1 });
-      let finalMonthlyData = [];
-      result.map((item) => {
-        if (moment(item?.a_date).format("MMMM") == req.body.month) {
-          finalMonthlyData.push(item);
+      STUDENTATTENDENCE.aggregate([
+        {
+          $addFields: {
+            date: { $toDate: "$a_date" }, // Replace 'yourDateField' with your field name
+          },
+        },
+        {
+          $addFields: {
+            month: { $month: "$date" },
+          },
+        },
+        {
+          $match: {
+            month: desiredMonth, // Replace desiredMonth with the desired month (1-12)
+          },
+        },
+      ]).exec((err, results) => {
+        if (err) {
+          console.error(err);
+        } else {
+          return res.status(200).json(results);
         }
       });
-      return res.status(200).json(finalMonthlyData);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }
