@@ -5,8 +5,17 @@ import reply from "../common/reply.js";
 import Student from "../models/studentModel.js";
 import User from "../models/userModel.js";
 import csv from "csvtojson";
+function checkMissingKeys(obj, requiredKeys) {
+  const missingKeys = requiredKeys.filter(
+    (key) => !obj.hasOwnProperty(key) || obj[key].trim() === ""
+  );
 
-
+  if (missingKeys.length > 0) {
+    return missingKeys.join(", ");
+  } else {
+    return missingKeys;
+  }
+}
 export default {
   //Student create
   async createStudent(req, res) {
@@ -129,32 +138,89 @@ export default {
   },
 
   async createStudentByCsv(req, res) {
-    var csvData = [];
-    csv()
-      .fromFile(req.file.path)
-      .then(async (jsonObj) => {
-        for (var x = 0; x < jsonObj.length; x++) {
+    try {
+      var csvData = [];
+      const requiredKeys = [
+        "name",
+        "roll_no",
+        "batch",
+        "father_name",
+        "email",
+        "gender",
+        "dob",
+        "permanent_address",
+        "current_address",
+        "phone_no",
+        "guardian_no",
+      ];
+      const jsonObj = await csv().fromFile(req.file.path);
+      for (const item of jsonObj) {
+        const result = checkMissingKeys(item, requiredKeys);
+        if (result.length === 0) {
           csvData.push({
-            name: jsonObj[x].name,
-            roll_no: jsonObj[x].roll_no,
-            father_name: jsonObj[x].father_name,
-            phone_no: jsonObj[x].phone_no,
-            guardian_no: jsonObj[x].guardian_no,
-            current_address: jsonObj[x].current_address,
-            permanent_address: jsonObj[x].permanent_address,
-            batch: jsonObj[x].batch,
-            gender: jsonObj[x].gender,
-            dob: jsonObj[x].dob,
-            email: jsonObj[x].email,
+            name: item.name,
+            roll_no: item.roll_no,
+            father_name: item.father_name,
+            phone_no: item.phone_no,
+            guardian_no: item.guardian_no,
+            current_address: item.current_address,
+            permanent_address: item.permanent_address,
+            batch: item.batch,
+            gender: item.gender,
+            dob: item.dob,
+            email: item.email,
             course_id: req.body.course_id,
-            semester_id: req.body.semester_id
+            semester_id: req.body.semester_id,
+          });
+        } else {
+          return res.status(202).send({
+            status_code: 202,
+            message: `You have these missing fields in your csv: ${result}`,
           });
         }
-        await STUDENT.insertMany(csvData);
-        return res.status(204).send({
-          status_code: 201,
-          message: "Student created successfully",
-        });
+      }
+
+      await STUDENT.insertMany(csvData);
+      return res.status(201).send({
+        status_code: 201,
+        message: "Student created successfully",
       });
+      // await csv()
+      //   .fromFile(req.file.path)
+      //   .then(async (jsonObj) => {
+      //     for (var x = 0; x < jsonObj.length; x++) {
+      //       const result = checkMissingKeys(jsonObj[x], requiredKeys);
+      //       if (result?.length == 0) {
+      //         csvData.push({
+      //           name: jsonObj[x].name,
+      //           roll_no: jsonObj[x].roll_no,
+      //           father_name: jsonObj[x].father_name,
+      //           phone_no: jsonObj[x].phone_no,
+      //           guardian_no: jsonObj[x].guardian_no,
+      //           current_address: jsonObj[x].current_address,
+      //           permanent_address: jsonObj[x].permanent_address,
+      //           batch: jsonObj[x].batch,
+      //           gender: jsonObj[x].gender,
+      //           dob: jsonObj[x].dob,
+      //           email: jsonObj[x].email,
+      //           course_id: req.body.course_id,
+      //           semester_id: req.body.semester_id,
+      //         });
+      //       } else {
+      //         return res.status(202).send({
+      //           status_code: 202,
+      //           message: `You have these missing fields in your csv ${result}`,
+      //         });
+      //       }
+      //     }
+      //     await STUDENT.insertMany(csvData);
+      //     return res.status(204).send({
+      //       status_code: 201,
+      //       message: "Student created successfully",
+      //     });
+      //   });
+    } catch (err) {
+      console.log(err);
+    }
   },
 };

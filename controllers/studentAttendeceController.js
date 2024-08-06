@@ -135,7 +135,7 @@ export default {
       STUDENTATTENDENCE.aggregate([
         {
           $addFields: {
-            date: { $toDate: "$a_date" }, // Replace 'yourDateField' with your field name
+            date: { $toDate: "$a_date" },
           },
         },
         {
@@ -145,7 +145,7 @@ export default {
         },
         {
           $match: {
-            month: desiredMonth, // Replace desiredMonth with the desired month (1-12)
+            month: desiredMonth,
           },
         },
       ]).exec((err, results) => {
