@@ -3,6 +3,7 @@ import SUBJECT from "../models/subjectModel.js";
 import COURSE from "../models/courseModel.js";
 import STUDENTATTENDENCE from "../models/studentAttendenceModel.js";
 import Validator from "validatorjs";
+import BIOMETRIC from "../models/biometricModel.js";
 import reply from "../common/reply.js";
 export default {
   // Get Student List
@@ -83,33 +84,27 @@ export default {
   async createStudentBioMetricData(req, res) {
     try {
       let request = req.body;
-      console.log("k1");
       if (Object.keys(request).length == 0) {
         return res.json(reply.failed("All input is required!"));
       }
-      console.log("k2");
-      console.log(Object.keys(request).length == 0);
       let validation = new Validator(request, {
         student_id: "required",
         finger_id: "required",
         face_id: "required",
       });
-      console.log(validation);
       if (validation.fails()) {
-        console.log('test')
         let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
         return res.json(reply.failed(validation.errors.first(err_key)));
       }
       let exist = await STUDENTATTENDENCE.findOne({
         student_id: request.student_id,
       });
-      console.log("exist");
       if (exist) {
         return res.status(409).send({
           message: "This student biometric are already exists.",
         });
       }
-      let studentBiometric = await STUDENTATTENDENCE.create(request);
+      let studentBiometric = await BIOMETRIC.create(request);
       return res.status(200).send({
         studentAttendance: studentBiometric,
         message: "Student Biometric created successfully",
