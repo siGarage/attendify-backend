@@ -26,7 +26,7 @@ const StudentAttendenceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    attendence_status: {
+    attendance_status: {
       type: String,
       required: true,
     },
@@ -35,6 +35,9 @@ const StudentAttendenceSchema = new mongoose.Schema(
       required: true,
     },
     batch: {
+      type: String,
+    },
+    machine_id: {
       type: String,
     },
   },

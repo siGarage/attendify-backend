@@ -2,13 +2,13 @@
 import mongoose from 'mongoose';
 
 const BiometricSchema = new mongoose.Schema({
-    face: {
+    face_id: {
         type: String
     },
-    finger: {
+    finger_id: {
         type: String
     },
-    user_id: {
+    student_id: {
         type: String
     },
 },

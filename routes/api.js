@@ -11,6 +11,7 @@ import CourseController from "../controllers/courseController.js";
 import SemesterController from "../controllers/semesterController.js";
 import StudentAttendenceController from "../controllers/studentAttendeceController.js";
 import TeacherAttendenceController from "../controllers/teacherAttendenceController.js";
+import MachineController from "../controllers/machineController.js";
 import multer from "multer";
 import bodyParser from "body-parser";
 
@@ -386,4 +387,30 @@ Router.post(
   StudentAttendenceController.fetchMonthlyAttendenceList
 );
 
+//Machine Api
+Router.get(
+  "/fetchStudentsData",
+  Authentication,
+  MachineController.fetchStudentsData
+);
+Router.get(
+  "/fetchSubjectsData",
+  Authentication,
+  MachineController.fetchSubjectsData
+);
+Router.get(
+  "/fetchCoursesData",
+  Authentication,
+  MachineController.fetchCoursesData
+);
+Router.post(
+  "/createStudentAttendanceData",
+  Authentication,
+  MachineController.createStudentAttendanceData
+);
+Router.post(
+  "/createStudentBioMetricData",
+  Authentication,
+  MachineController.createStudentBioMetricData
+);
 export default Router;
