@@ -2,6 +2,7 @@ import STUDENT from "../models/studentModel.js";
 import SUBJECT from "../models/subjectModel.js";
 import COURSE from "../models/courseModel.js";
 import STUDENTATTENDENCE from "../models/studentAttendenceModel.js";
+import SEMESTER from "../models/semesterModel.js";
 import Validator from "validatorjs";
 import BIOMETRIC from "../models/biometricModel.js";
 import reply from "../common/reply.js";
@@ -38,6 +39,16 @@ export default {
     }
   },
 
+  // Get Phases List
+  async fetchPhasesData(req, res) {
+    try {
+      let phases = await SEMESTER.find({}).select("_id name course_id");
+      return res.status(200).json(phases);
+    } catch (err) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  },
+
   // Get Courses List
   async createStudentAttendanceData(req, res) {
     try {
@@ -53,12 +64,14 @@ export default {
         course_id: "required",
         subject_id: "required",
         a_date: "required",
-        attendance_status:"required",
+        attendance_status: "required",
         machine_id: "required",
       });
       if (validation.fails()) {
         let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
-        return res.status(409).json(reply.failed(validation.errors.first(err_key)));
+        return res
+          .status(409)
+          .json(reply.failed(validation.errors.first(err_key)));
       }
       let exist = await STUDENTATTENDENCE.findOne({
         student_id: request.student_id,

@@ -403,6 +403,11 @@ Router.get(
   Authentication,
   MachineController.fetchCoursesData
 );
+Router.get(
+  "/fetchPhasesData",
+  Authentication,
+  MachineController.fetchPhasesData
+);
 Router.post(
   "/createStudentAttendanceData",
   Authentication,
