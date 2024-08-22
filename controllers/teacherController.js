@@ -11,10 +11,6 @@ export default {
       if (Object.keys(request).length == 0) {
         return res.json(reply.failed("All input is required!"));
       }
-      request.avatar =
-        req?.file == undefined
-          ? null
-          : req?.file?.filename != undefined && req?.file?.filename;
       let validation = new Validator(request, {
         name: "required|string",
         email: "required|email",

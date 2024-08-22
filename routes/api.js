@@ -100,6 +100,11 @@ Router.post(
   Authentication,
   StudentController.getStudentById
 );
+Router.put(
+  "/updateStudent",
+  Authentication,
+  StudentController.updateStudent
+);
 //-----------------------------TEACHER_ROUTES-------------------------//
 //Create Teacher
 Router.post(

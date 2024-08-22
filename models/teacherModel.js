@@ -6,9 +6,6 @@ const TeacherSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    avatar: {
-        type: String
-    },
     phone_no: {
         type: Number,
         required: true
