@@ -46,12 +46,7 @@ Router.delete("/logout", Authentication, UserController.logout);
 Router.put("/forget-password", UserController.forgetPassword);
 
 //Profile Update
-Router.put(
-  "/userProfileUpdate",
-  Authentication,
-  upload.single("image"),
-  UserController.updateUsersProfile
-);
+Router.put("/userProfileUpdate", Authentication, UserController.updateProfile);
 
 //Get user by id
 Router.post("/getUserById", Authentication, UserController.getUserById);
@@ -100,11 +95,7 @@ Router.post(
   Authentication,
   StudentController.getStudentById
 );
-Router.put(
-  "/updateStudent",
-  Authentication,
-  StudentController.updateStudent
-);
+Router.put("/updateStudent", Authentication, StudentController.updateStudent);
 //-----------------------------TEACHER_ROUTES-------------------------//
 //Create Teacher
 Router.post(

@@ -148,24 +148,21 @@ export default {
     try {
       let request = req.body;
       const { name, description, id } = req.body;
-      let file = req?.file?.filename;
-
       if (!request) {
         return res.json(reply.failed("All input is required"));
       }
-      // console.log(name,description,file);
       const user = await User.findById({ _id: req.user.id });
       if (!user) {
         return res.json(reply.failed("User not found!!"));
       }
-      if (name && description && file) {
+      if (name) {
         const users = await User.findOneAndUpdate(
           { _id: req.body.id },
           {
             $set: {
-              image: req.file.filename,
+              phone: req.body.phone,
               name: req.body.name,
-              description: req.body.description,
+              email: req.body.email,
             },
           },
           { new: true }
@@ -305,6 +302,42 @@ export default {
     }
   },
 
+  async updateProfile(req, res) {
+    try {
+      let request = req.body;
+      const { name, description, id } = req.body;
+      if (!request) {
+        return res.json(reply.failed("All input is required"));
+      }
+      const user = await User.findById({ _id: req.user.id });
+      if (!user) {
+        return res.json(reply.failed("User not found!!"));
+      }
+      const users = await User.findOneAndUpdate(
+        { _id: req.body.id },
+        {
+          $set: {
+            phone: req.body.phone,
+            name: req.body.name,
+            email: req.body.email,
+          },
+        },
+        { new: true }
+      );
+
+      if (users) {
+        return res.status(200).send({
+          status_code: 200,
+          users: users,
+          message: "User updated successfully.",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.status(400).send(err);
+    }
+  },
+
   async getUserById(req, res) {
     let user = await User.findById(req.user._id);
     return res.status(200).send({ user });
@@ -317,5 +350,5 @@ export default {
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }
-  }
+  },
 };
