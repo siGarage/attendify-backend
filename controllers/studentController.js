@@ -37,21 +37,22 @@ export default {
         let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
         return res.json(reply.failed(validation.errors.first(err_key)));
       }
-      let exist = await USER.findOne({ email: request.email });
+      let exist = await STUDENT.findOne({ email: request.email });
       if (exist) {
         return res
           .status(403)
           .send({ message: "This email is already exists!" });
       }
-      const user = await USER.create(request);
-      let nrequest = { ...request, user_id: user._id };
-      let student = await STUDENT.create(nrequest);
+      // const user = await USER.create(request);
+      // let nrequest = { ...request, user_id: user._id };
+      let student = await STUDENT.create(request);
       return res.status(201).send({
         status_code: 201,
         student: student,
         message: "Student created successfully",
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -59,7 +60,7 @@ export default {
   // Get Student List
   async getStudentList(req, res) {
     try {
-      let students = await STUDENT.find();
+      let students = await STUDENT.find({}).sort({ roll_no: -1 });
       return res.status(200).json(students);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
