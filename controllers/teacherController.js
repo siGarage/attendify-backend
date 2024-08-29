@@ -2,12 +2,13 @@ import TEACHER from "../models/teacherModel.js";
 import USER from "../models/userModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
-
+import bcrypt from "bcryptjs";
 export default {
   //Teacher create
   async createTeacher(req, res) {
     try {
       let request = req.body;
+      console.log(request);
       if (Object.keys(request).length == 0) {
         return res.json(reply.failed("All input is required!"));
       }
@@ -26,7 +27,14 @@ export default {
           .status(403)
           .send({ message: "This email is already exists!" });
       }
-      const user = await USER.create(request);
+      let password = bcrypt.hashSync(request.dob);
+      let userModelRequest = {
+        name: request.name,
+        email: request.email,
+        phone_no: request.phone_no,
+        password: password,
+      };
+      const user = await USER.create(userModelRequest);
       let nrequest = { ...request, user_id: user._id };
       let teacher = await TEACHER.create(nrequest);
       return res.status(201).send({
@@ -35,6 +43,7 @@ export default {
         message: "Teacher created successfully",
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
