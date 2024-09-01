@@ -1,55 +1,59 @@
+import mongoose from "mongoose";
 
-import mongoose from 'mongoose';
-
-const TeacherSchema = new mongoose.Schema({
+const TeacherSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
+    },
+    emp_id: {
+      type: Number,
+      required: true,
     },
     phone_no: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     alternate_no: {
-        type: Number
+      type: Number,
     },
     current_address: {
-        type: String
+      type: String,
     },
     permeanent_address: {
-        type: String,
-        requried: true
+      type: String,
+      requried: true,
     },
     department_id: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     designation: {
-        type: String
+      type: String,
     },
     user_id: {
-        type: String
+      type: String,
     },
     dob: {
-        type: Date
+      type: Date,
     },
     gender: {
-        type: String
+      type: String,
     },
     email: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     notes: {
-        type: String
+      type: String,
     },
     status: {
-        type: Boolean
+      type: Boolean,
     },
-},
-    { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
+  },
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
 
-const Teacher = mongoose.model('teachers', TeacherSchema)
+const Teacher = mongoose.model("teachers", TeacherSchema);
 
 export default Teacher;

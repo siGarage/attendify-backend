@@ -5,6 +5,8 @@ import STUDENTATTENDENCE from "../models/studentAttendenceModel.js";
 import SEMESTER from "../models/semesterModel.js";
 import Validator from "validatorjs";
 import BIOMETRIC from "../models/biometricModel.js";
+import USER from "../models/userModel.js";
+import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
 export default {
   // Get Student List
@@ -123,6 +125,38 @@ export default {
         message: "Student Biometric created successfully",
       });
     } catch (err) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  },
+  async getTeacherDetails(req, res) {
+    try {
+      const teacher = await TEACHER.find({});
+      const user = await USER.find({});
+      const combinedUserArray = user.map((user) => {
+        const matchingProfile = teacher.find(
+          (profile) => profile.user_id === user._id.toString()
+        ); // Ensure correct user_id comparison
+
+        if (matchingProfile) {
+          return {
+            id: user._id,
+            name: user.name,
+            emp_id: matchingProfile.emp_id || null, // Include emp_id if present, otherwise null
+            password: user.password,
+            email: user.email,
+          };
+        }
+
+        // Handle cases where there's no matching profile
+        return null; // Or provide a default object with null/placeholder values
+      });
+      const filteredCombinedUserArray = combinedUserArray.filter(
+        (user) => user !== null
+      ); // Remove null entries
+      // console.log(filteredCombinedUserArray);
+      return res.status(200).json(filteredCombinedUserArray);
+    } catch (err) {
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

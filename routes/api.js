@@ -414,4 +414,9 @@ Router.post(
   Authentication,
   MachineController.createStudentBioMetricData
 );
+Router.get(
+  "/getTeacherDetails",
+  Authentication,
+  MachineController.getTeacherDetails
+);
 export default Router;

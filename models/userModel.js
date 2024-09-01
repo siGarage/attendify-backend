@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema(
     group: {
       type: String,
     },
+    role: { type: String },
     status: {
       type: Boolean,
     },
