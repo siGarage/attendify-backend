@@ -15,6 +15,15 @@ const SubjectSchema = new mongoose.Schema(
     others: {
       type: Boolean,
     },
+    ece: {
+      type: Boolean,
+    },
+    aetcom: {
+      type: Boolean,
+    },
+    fap: {
+      type: Boolean,
+    },
     clinical: {
       type: Boolean,
     },
