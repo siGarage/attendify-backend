@@ -419,4 +419,9 @@ Router.get(
   Authentication,
   MachineController.getTeacherDetails
 );
+Router.get(
+  "/getStundentAttendance",
+  Authentication,
+  MachineController.getStundentAttendance
+);
 export default Router;

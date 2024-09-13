@@ -160,4 +160,14 @@ export default {
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
+
+  async getStundentAttendance(req, res) {
+    try {
+      const stundentAttendance = await STUDENTATTENDENCE.find({});
+      return res.status(200).json(stundentAttendance);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  },
 };

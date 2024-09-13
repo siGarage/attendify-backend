@@ -78,7 +78,7 @@ export default {
           csvData.push({
             student_id: getStudentId._id,
             roll_no: jsonObj[x].roll_no,
-            attendence_status: jsonObj[x].attendence_status,
+            attendance_status: jsonObj[x].attendence_status,
             a_date: moment(jsonObj[x].a_date).format("YYYY-MM-DD"),
             course_id: req.body.course_id,
             subject_id: req.body.subject_id,
@@ -162,15 +162,15 @@ export default {
 
   //Get student Attendence by Id
   async fetchSingleStudentAttendences(req, res) {
-    let { id, type, month } = req.body;
+    let { id, type, month,year } = req.body;
     try {
       const currentMonth = month;
       const startOfMonth = moment()
-        .month(currentMonth)
+        .month(currentMonth).year(year)
         .startOf("month")
         .format("YYYY-MM-DD");
       const endOfMonth = moment()
-        .month(currentMonth)
+        .month(currentMonth).year(year)
         .endOf("month")
         .format("YYYY-MM-DD");
       let studentAttendences = await STUDENTATTENDENCE.find({
