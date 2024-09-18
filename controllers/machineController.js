@@ -2,12 +2,25 @@ import STUDENT from "../models/studentModel.js";
 import SUBJECT from "../models/subjectModel.js";
 import COURSE from "../models/courseModel.js";
 import STUDENTATTENDENCE from "../models/studentAttendenceModel.js";
+// import LASTUPDATE from "../models/lastUpdateAttendanceModel.js";
 import SEMESTER from "../models/semesterModel.js";
 import Validator from "validatorjs";
 import BIOMETRIC from "../models/biometricModel.js";
 import USER from "../models/userModel.js";
 import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
+import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
+import TeacherAttendence from "../models/teacherAttendenceModel.js";
+function findHighestDate(data) {
+  let highestDate = null;
+  for (const item of data) {
+    const date = item.a_date;
+    if (!highestDate || date > highestDate) {
+      highestDate = date;
+    }
+  }
+  return highestDate;
+}
 export default {
   // Get Student List
   async fetchStudentsData(req, res) {
@@ -55,47 +68,81 @@ export default {
   async createStudentAttendanceData(req, res) {
     try {
       let request = req.body;
-      if (Object.keys(request).length == 0) {
-        return res.json(reply.failed("All input is required!"));
+      for (const item of request) {
+        const attendance = new STUDENTATTENDENCE(item);
+        await attendance.save();
       }
-      let validation = new Validator(request, {
-        student_id: "required",
-        type: "required",
-        semester_id: "required",
-        roll_no: "required",
-        course_id: "required",
-        subject_id: "required",
-        a_date: "required",
-        attendance_status: "required",
-        machine_id: "required",
-      });
-      if (validation.fails()) {
-        let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
-        return res
-          .status(409)
-          .json(reply.failed(validation.errors.first(err_key)));
-      }
-      let exist = await STUDENTATTENDENCE.findOne({
-        student_id: request.student_id,
-        type: request.type,
-        subject_id: request.subject_id,
-        a_date: request.a_date,
-      });
-      if (exist) {
-        return res.status(409).send({
-          message:
-            "This student attendence are already exists for this subject type.",
+      let highestDate = findHighestDate(request);
+      if (highestDate) {
+        await LASTUPDATE.findOne({
+          machine_id: request[0].machine_id,
+        }).then(async (doc) => {
+          if (doc) {
+            let id = doc._id;
+            let uLastData = {
+              machine_id: request[0].machine_id,
+              lastUpdate: highestDate,
+            };
+            await LastUpdatedAttendance.findOneAndUpdate(
+              { _id: id },
+              uLastData
+            );
+            return res.status(200).send({
+              message: "Student Attendence created successfully",
+            });
+          } else {
+            let lastData = {
+              machine_id: request[0].machine_id,
+              lastUpdate: highestDate,
+            };
+            const lastUdpate = new LastUpdatedAttendance(lastData);
+            await lastUdpate.save();
+            return res.status(200).send({
+              message: "Student Attendence created successfully",
+            });
+          }
         });
       }
-      let studentAttendence = await STUDENTATTENDENCE.create(request);
-      return res.status(200).send({
-        studentAttendence: studentAttendence,
-        message: "Student Attendence created successfully",
-      });
-    } catch (err) {
-      return res.status(500).send({ message: "Internal Server Error" });
+    } catch (error) {
+      console.error("Error:", error);
     }
   },
+
+  async createTeacherAttendanceData(req, res) {
+    try {
+      let request = req.body;
+      for (const item of request) {
+        const attendance = new TeacherAttendence(item);
+        await attendance.save();
+      }
+      return res.status(200).send({
+        message: "Teacher Attendence created successfully",
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  },
+
+  async getLastUpdate(req, res) {
+    try {
+      await LastUpdatedAttendance.findOne({
+        machine_id: req.body.machine_id,
+      }).then(async (doc) => {
+        if (doc) {
+          return res.status(200).send({
+            ...doc._doc,
+          });
+        } else {
+          return res.status(400).send({
+            message: "Not Found",
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  },
+
   async createStudentBioMetricData(req, res) {
     try {
       let request = req.body;
@@ -128,9 +175,10 @@ export default {
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
+
   async getTeacherDetails(req, res) {
     try {
-      const teacher = await TEACHER.find({});
+      const teacher = await TEACHER.find();
       const user = await USER.find({});
       const combinedUserArray = user.map((user) => {
         const matchingProfile = teacher.find(

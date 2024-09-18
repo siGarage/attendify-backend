@@ -410,6 +410,16 @@ Router.post(
   MachineController.createStudentAttendanceData
 );
 Router.post(
+  "/createTeacherAttendanceData",
+  Authentication,
+  MachineController.createTeacherAttendanceData
+);
+Router.post(
+  "/getLastUpdate",
+  Authentication,
+  MachineController.getLastUpdate
+);
+Router.post(
   "/createStudentBioMetricData",
   Authentication,
   MachineController.createStudentBioMetricData
