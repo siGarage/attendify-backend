@@ -6,6 +6,10 @@ const lastUpdatedAttendanceSchema = new mongoose.Schema(
       type: String,
       allowNull: false,
     },
+    role: {
+      type: String,
+      allowNull: false,
+    },
     lastUpdate: {
       type: String,
       allowNull: false,

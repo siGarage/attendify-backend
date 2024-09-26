@@ -81,6 +81,7 @@ export default {
             let id = doc._id;
             let uLastData = {
               machine_id: request[0].machine_id,
+              role: "Student",
               lastUpdate: highestDate,
             };
             await LastUpdatedAttendance.findOneAndUpdate(
@@ -94,6 +95,7 @@ export default {
             let lastData = {
               machine_id: request[0].machine_id,
               lastUpdate: highestDate,
+              role:"Teacher"
             };
             const lastUdpate = new LastUpdatedAttendance(lastData);
             await lastUdpate.save();
@@ -115,9 +117,39 @@ export default {
         const attendance = new TeacherAttendence(item);
         await attendance.save();
       }
-      return res.status(200).send({
-        message: "Teacher Attendence created successfully",
-      });
+      let highestDate = findHighestDate(request);
+      if (highestDate) {
+        await LASTUPDATE.findOne({
+          machine_id: request[0].machine_id,
+        }).then(async (doc) => {
+          if (doc) {
+            let id = doc._id;
+            let uLastData = {
+              machine_id: request[0].machine_id,
+              role: "Teacher",
+              lastUpdate: highestDate,
+            };
+            await LastUpdatedAttendance.findOneAndUpdate(
+              { _id: id },
+              uLastData
+            );
+            return res.status(200).send({
+              message: "Teacher Attendence created successfully",
+            });
+          } else {
+            let lastData = {
+              machine_id: request[0].machine_id,
+              lastUpdate: highestDate,
+              role:"Teacher"
+            };
+            const lastUdpate = new LastUpdatedAttendance(lastData);
+            await lastUdpate.save();
+            return res.status(200).send({
+              message: "Teacher Attendence created successfully",
+            });
+          }
+        });
+      }
     } catch (error) {
       console.error("Error:", error);
     }
