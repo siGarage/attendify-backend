@@ -157,24 +157,20 @@ export default {
 
   async getLastUpdate(req, res) {
     try {
-      let data = await LastUpdatedAttendance.find({});
-      return res.status(200).send({
-        data,
+      await LastUpdatedAttendance.findOne({
+        machine_id: req.body.machine_id,
+        role:req.body.role
+      }).then(async (doc) => {
+        if (doc) {
+          return res.status(200).send({
+            ...doc._doc,
+          });
+        } else {
+          return res.status(400).send({
+            message: "Not Found",
+          });
+        }
       });
-      // await LastUpdatedAttendance.findOne({
-      //   machine_id: req.body.machine_id,
-      //   role:req.body.role
-      // }).then(async (doc) => {
-      //   if (doc) {
-      //     return res.status(200).send({
-      //       ...doc._doc,
-      //     });
-      //   } else {
-      //     return res.status(400).send({
-      //       message: "Not Found",
-      //     });
-      //   }
-      // });
     } catch (error) {
       console.error("Error:", error);
     }
