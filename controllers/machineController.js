@@ -82,7 +82,7 @@ export default {
             let uLastData = {
               machine_id: request[0].machine_id,
               role: "Student",
-              lastUpdate: highestDate
+              lastUpdate: highestDate,
             };
             await LastUpdatedAttendance.findOneAndUpdate(
               { _id: id },
@@ -95,7 +95,7 @@ export default {
             let lastData = {
               machine_id: request[0].machine_id,
               lastUpdate: highestDate,
-              role:"Teacher"
+              role: "Teacher",
             };
             const lastUdpate = new LastUpdatedAttendance(lastData);
             await lastUdpate.save();
@@ -140,7 +140,7 @@ export default {
             let lastData = {
               machine_id: request[0].machine_id,
               lastUpdate: highestDate,
-              role:"Teacher"
+              role: "Teacher",
             };
             const lastUdpate = new LastUpdatedAttendance(lastData);
             await lastUdpate.save();
@@ -157,20 +157,24 @@ export default {
 
   async getLastUpdate(req, res) {
     try {
-      await LastUpdatedAttendance.findOne({
-        machine_id: req.body.machine_id,
-        role:req.body.role
-      }).then(async (doc) => {
-        if (doc) {
-          return res.status(200).send({
-            ...doc._doc,
-          });
-        } else {
-          return res.status(400).send({
-            message: "Not Found",
-          });
-        }
+      let data = await LastUpdatedAttendance.find({});
+      return res.status(200).send({
+        data,
       });
+      // await LastUpdatedAttendance.findOne({
+      //   machine_id: req.body.machine_id,
+      //   role:req.body.role
+      // }).then(async (doc) => {
+      //   if (doc) {
+      //     return res.status(200).send({
+      //       ...doc._doc,
+      //     });
+      //   } else {
+      //     return res.status(400).send({
+      //       message: "Not Found",
+      //     });
+      //   }
+      // });
     } catch (error) {
       console.error("Error:", error);
     }
