@@ -26,7 +26,7 @@ const TeacherAttendenceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    date: {
+    a_date: {
       type: Date,
     },
   },

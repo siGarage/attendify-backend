@@ -159,15 +159,17 @@ export default {
     try {
       await LastUpdatedAttendance.findOne({
         machine_id: req.body.machine_id,
-        role:req.body.role
+        role: req.body.role,
       }).then(async (doc) => {
         if (doc) {
           return res.status(200).send({
             ...doc._doc,
           });
         } else {
-          return res.status(400).send({
-            message: "Not Found",
+          return res.status(200).send({
+            machine_id: req.body.machine_id,
+            role: req.body.role,
+            lastUpdate:null
           });
         }
       });
