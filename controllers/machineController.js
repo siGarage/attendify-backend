@@ -74,7 +74,7 @@ export default {
       }
       let highestDate = findHighestDate(request);
       if (highestDate) {
-        await LASTUPDATE.findOne({
+        await LastUpdatedAttendance.findOne({
           machine_id: request[0].machine_id,
         }).then(async (doc) => {
           if (doc) {
@@ -82,7 +82,7 @@ export default {
             let uLastData = {
               machine_id: request[0].machine_id,
               role: "Student",
-              lastUpdate: highestDate,
+              lastUpdate: highestDate
             };
             await LastUpdatedAttendance.findOneAndUpdate(
               { _id: id },
@@ -119,7 +119,7 @@ export default {
       }
       let highestDate = findHighestDate(request);
       if (highestDate) {
-        await LASTUPDATE.findOne({
+        await LastUpdatedAttendance.findOne({
           machine_id: request[0].machine_id,
         }).then(async (doc) => {
           if (doc) {
