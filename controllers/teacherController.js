@@ -8,7 +8,6 @@ export default {
   async createTeacher(req, res) {
     try {
       let request = req.body;
-      console.log(request);
       if (Object.keys(request).length == 0) {
         return res.json(reply.failed("All input is required!"));
       }
@@ -35,6 +34,7 @@ export default {
         password: password,
       };
       const user = await USER.create(userModelRequest);
+      console.log(request.emp_id,"kartik");
       let nrequest = { ...request, user_id: user._id };
       let teacher = await TEACHER.create(nrequest);
       return res.status(201).send({
@@ -43,6 +43,7 @@ export default {
         message: "Teacher created successfully",
       });
     } catch (err) {
+      console.log(err)
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
