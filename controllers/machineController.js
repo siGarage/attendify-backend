@@ -159,6 +159,7 @@ export default {
     try {
       await LastUpdatedAttendance.findOne({
         machine_id: req.body.machine_id,
+        role:req.body.role
       }).then(async (doc) => {
         if (doc) {
           return res.status(200).send({
