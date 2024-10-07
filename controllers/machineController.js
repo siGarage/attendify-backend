@@ -95,7 +95,7 @@ export default {
             let lastData = {
               machine_id: request[0].machine_id,
               lastUpdate: highestDate,
-              role: "Teacher",
+              role: "Student",
             };
             const lastUdpate = new LastUpdatedAttendance(lastData);
             await lastUdpate.save();
