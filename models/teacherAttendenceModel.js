@@ -29,6 +29,9 @@ const TeacherAttendenceSchema = new mongoose.Schema(
     a_date: {
       type: Date,
     },
+    machine_id: {
+      type: String,
+    },
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );

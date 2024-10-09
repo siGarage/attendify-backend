@@ -186,14 +186,16 @@ export default {
       }
       let validation = new Validator(request, {
         student_id: "required",
-        finger_id: "required",
+        finger_id_1: "required",
+        finger_id_2: "required",
+        finger_id_3: "required",
         face_id: "required",
       });
       if (validation.fails()) {
         let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
         return res.json(reply.failed(validation.errors.first(err_key)));
       }
-      let exist = await STUDENTATTENDENCE.findOne({
+      let exist = await BIOMETRIC.findOne({
         student_id: request.student_id,
       });
       if (exist) {
