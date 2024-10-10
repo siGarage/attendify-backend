@@ -21,6 +21,24 @@ function findHighestDate(data) {
   }
   return highestDate;
 }
+function mergeArrays(filteredData, bios) {
+  const mergedArray = [];
+  filteredData.forEach(async (attendance) => {
+    const matchingStudent = bios.find(
+      (student) => student._id.toHexString() === attendance.student_id
+    );
+    if (matchingStudent) {
+      mergedArray.push({
+        ...attendance,
+        roll_no: matchingStudent._doc.roll_no,
+        batch: matchingStudent._doc.batch,
+      });
+    } else {
+      mergedArray.push(attendance);
+    }
+  });
+  return mergedArray;
+}
 export default {
   // Get Student List
   async fetchStudentsData(req, res) {
@@ -68,7 +86,10 @@ export default {
   async createStudentAttendanceData(req, res) {
     try {
       let request = req.body;
-      for (const item of request) {
+      const bodyData = req.body;
+      const students = await STUDENT.find({});
+      const final = mergeArrays(bodyData, students);
+      for (const item of final) {
         const attendance = new STUDENTATTENDENCE(item);
         await attendance.save();
       }
@@ -169,7 +190,7 @@ export default {
           return res.status(200).send({
             machine_id: req.body.machine_id,
             role: req.body.role,
-            lastUpdate:null
+            lastUpdate: null,
           });
         }
       });
