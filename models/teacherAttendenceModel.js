@@ -10,6 +10,10 @@ const TeacherAttendenceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    emp_id:{
+      type: String,
+      required: true,
+    },
     course_id: {
       type: String,
     },
@@ -26,7 +30,8 @@ const TeacherAttendenceSchema = new mongoose.Schema(
       required: true,
     },
     a_date: {
-      type: Date,
+      type: String,
+      required: true,
     },
     machine_id: {
       type: String,

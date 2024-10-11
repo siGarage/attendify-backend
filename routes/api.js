@@ -337,7 +337,7 @@ Router.post(
 );
 
 //Get Teacher Attendences
-Router.get(
+Router.post(
   "/getTeacherAttendences",
   Authentication,
   TeacherAttendenceController.getTeacherAttendenceList

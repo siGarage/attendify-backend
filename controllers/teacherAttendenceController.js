@@ -1,7 +1,27 @@
 import TEACHERATTENDENCE from "../models/teacherAttendenceModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
-
+function buildFilterQuery(body) {
+  const query = {};
+  for (const key in body) {
+    if (body.hasOwnProperty(key)) {
+      const value = body[key];
+      if (value === "all") {
+        // No filtering for this field
+      } else if (value) {
+        // Apply filter logic based on value type
+        if (typeof value === "string") {
+          query[key] = new RegExp(value, "i"); // Case-insensitive search
+        } else if (typeof value === "object") {
+          // Handle complex filters if needed (e.g., $gt, $lt)
+        } else {
+          query[key] = value; // Default filter (e.g., exact match)
+        }
+      }
+    }
+  }
+  return query;
+}
 export default {
   //Teacher Attendence create
   async createTeacherAttendence(req, res) {
@@ -41,11 +61,21 @@ export default {
     }
   },
 
-  // Get Teacher Attendence List
   async getTeacherAttendenceList(req, res) {
+    const filterQuery = buildFilterQuery(req.body);
     try {
-      let teacherAttendences = await TEACHERATTENDENCE.find();
-      return res.status(200).json(teacherAttendences);
+      let teacherAttendences = await TEACHERATTENDENCE.find(filterQuery);
+      const filteredData = [];
+      for (let i = 0; i < teacherAttendences.length; i++) {
+        const currentDate = teacherAttendences[i].a_date;
+        if (
+          currentDate >= req.body.fromdate &&
+          currentDate <= req.body.endDate
+        ) {
+          filteredData.push(teacherAttendences[i]);
+        }
+      }
+      return res.status(200).json(filteredData);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }
