@@ -99,6 +99,7 @@ export default {
     const filterQuery = buildFilterQuery(req.body);
     try {
       let studentAttendences = await STUDENTATTENDENCE.find(filterQuery);
+      console.log(studentAttendences);
       const filteredData = [];
       for (let i = 0; i < studentAttendences.length; i++) {
         const currentDate = studentAttendences[i].a_date;
