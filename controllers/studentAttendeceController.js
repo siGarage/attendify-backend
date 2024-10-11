@@ -97,12 +97,8 @@ export default {
   // Get Student Attendence List
   async fetchStudentAttendenceList(req, res) {
     const filterQuery = buildFilterQuery(req.body);
-    let studentA = await STUDENTATTENDENCE.find();
-    console.log(req.body);
-    console.log(studentA,"kartik");
     try {
       let studentAttendences = await STUDENTATTENDENCE.find(filterQuery);
-      console.log(studentAttendences);
       const filteredData = [];
       for (let i = 0; i < studentAttendences.length; i++) {
         const currentDate = studentAttendences[i].a_date;
@@ -252,7 +248,6 @@ export default {
       // Assuming you have five search values
       Object.keys(objectValues).forEach((key) => {
         const value = objectValues[key];
-        console.log(value);
         if (value !== null && value !== undefined && value) {
           filter[key] = value; // Assuming the object is nested under a field called 'user'
         }
