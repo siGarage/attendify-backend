@@ -97,6 +97,9 @@ export default {
   // Get Student Attendence List
   async fetchStudentAttendenceList(req, res) {
     const filterQuery = buildFilterQuery(req.body);
+    let studentA = await STUDENTATTENDENCE.find();
+    console.log(req.body);
+    console.log(studentA);
     try {
       let studentAttendences = await STUDENTATTENDENCE.find(filterQuery);
       console.log(studentAttendences);
