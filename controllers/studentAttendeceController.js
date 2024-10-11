@@ -99,7 +99,7 @@ export default {
     const filterQuery = buildFilterQuery(req.body);
     let studentA = await STUDENTATTENDENCE.find();
     console.log(req.body);
-    console.log(studentA);
+    console.log(studentA,"kartik");
     try {
       let studentAttendences = await STUDENTATTENDENCE.find(filterQuery);
       console.log(studentAttendences);
