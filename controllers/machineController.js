@@ -11,6 +11,7 @@ import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
 import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
 import TeacherAttendence from "../models/teacherAttendenceModel.js";
+import StudentAttendence from "../models/studentAttendenceModel.js";
 function findHighestDate(data) {
   let highestDate = null;
   for (const item of data) {
@@ -32,6 +33,23 @@ function mergeArrays(filteredData, bios) {
         ...attendance,
         roll_no: matchingStudent._doc.roll_no,
         batch: matchingStudent._doc.batch,
+      });
+    } else {
+      mergedArray.push(attendance);
+    }
+  });
+  return mergedArray;
+}
+function mergeTArrays(filteredData, bios) {
+  const mergedArray = [];
+  filteredData.forEach(async (attendance) => {
+    const matchingStudent = bios.find(
+      (student) => student._id.toHexString() === attendance.teacher_id
+    );
+    if (matchingStudent) {
+      mergedArray.push({
+        ...attendance,
+        emp_id: matchingStudent._doc.emp_id,
       });
     } else {
       mergedArray.push(attendance);
@@ -90,8 +108,11 @@ export default {
       const students = await STUDENT.find({});
       const final = mergeArrays(bodyData, students);
       for (const item of final) {
-        const attendance = new STUDENTATTENDENCE(item);
-        await attendance.save();
+        let exit = await STUDENTATTENDENCE.findOne({ item });
+        if (!exit) {
+          const attendance = new STUDENTATTENDENCE(item);
+          await attendance.save();
+        }
       }
       let highestDate = findHighestDate(request);
       if (highestDate) {
@@ -134,9 +155,15 @@ export default {
   async createTeacherAttendanceData(req, res) {
     try {
       let request = req.body;
-      for (const item of request) {
-        const attendance = new TeacherAttendence(item);
-        await attendance.save();
+      const bodyData = req.body;
+      const teachers = await TEACHER.find({});
+      const final = mergeTArrays(bodyData, teachers);
+      for (const item of final) {
+        let exit = await TeacherAttendence.findOne({ item });
+        if (!exit) {
+          const attendance = new TeacherAttendence(item);
+          await attendance.save();
+        }
       }
       let highestDate = findHighestDate(request);
       if (highestDate) {
