@@ -25,8 +25,7 @@ const StudentSchema = new mongoose.Schema({
         type: String
     },
     permanent_address: {
-        type: String,
-        requried:true
+        type: String
     },
     batch: {
         type: String

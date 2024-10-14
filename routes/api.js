@@ -420,9 +420,9 @@ Router.post(
   MachineController.getLastUpdate
 );
 Router.post(
-  "/createStudentBioMetricData",
+  "/createBioMetricData",
   Authentication,
-  MachineController.createStudentBioMetricData
+  MachineController.createBioMetricData
 );
 Router.get(
   "/getTeacherDetails",

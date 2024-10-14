@@ -14,7 +14,10 @@ const BiometricSchema = new mongoose.Schema(
     finger_id_3: {
       type: String,
     },
-    student_id: {
+    user_id: {
+      type: String,
+    },
+    type: {
       type: String,
     },
   },
