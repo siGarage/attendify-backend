@@ -2,8 +2,8 @@ import STUDENT from "../models/studentModel.js";
 import USER from "../models/userModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
-import Student from "../models/studentModel.js";
 import User from "../models/userModel.js";
+import bcrypt from "bcryptjs";
 import csv from "csvtojson";
 function checkMissingKeys(obj, requiredKeys) {
   const missingKeys = requiredKeys.filter(
@@ -43,9 +43,15 @@ export default {
           .status(403)
           .send({ message: "This email is already exists!" });
       }
-      // const user = await USER.create(request);
-      // let nrequest = { ...request, user_id: user._id };
-      let student = await STUDENT.create(request);
+      let password = bcrypt.hashSync(request.dob);
+      let phone_no = request.phone_no;
+      const user = await USER.create({
+        ...request,
+        password: password,
+        phone_no: phone_no,
+      });
+      let nrequest = { ...request, user_id: user._id };
+      let student = await STUDENT.create(nrequest);
       return res.status(201).send({
         status_code: 201,
         student: student,

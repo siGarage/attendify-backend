@@ -31,10 +31,11 @@ export default {
         name: request.name,
         email: request.email,
         phone_no: request.phone_no,
-        password: password,
+        role:request.role,
+        password: password
       };
+      console.log(userModelRequest,'userModelRequest');
       const user = await USER.create(userModelRequest);
-      console.log(request.emp_id,"kartik");
       let nrequest = { ...request, user_id: user._id };
       let teacher = await TEACHER.create(nrequest);
       return res.status(201).send({

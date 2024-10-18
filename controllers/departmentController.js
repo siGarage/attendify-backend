@@ -1,4 +1,5 @@
 import DEPARTMENT from "../models/departmentModel.js";
+import USER from "../models/userModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
 
@@ -17,6 +18,18 @@ export default {
         let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
         return res.json(reply.failed(validation.errors.first(err_key)));
       }
+      let TeacherInfo = await USER.findById(request.hod);
+      let id = request.hod;
+      let finalData = {
+        name: TeacherInfo.name,        
+        email: TeacherInfo.email,
+        phone_no: TeacherInfo.phone,
+        password: TeacherInfo.password,
+        role: "2",
+      };
+      console.log(finalData, "finalData");
+      console.log(id);
+      let done = await USER.findByIdAndUpdate({ id, finalData });
       let exist = await DEPARTMENT.findOne({ name: request.name });
       if (exist) {
         return res
