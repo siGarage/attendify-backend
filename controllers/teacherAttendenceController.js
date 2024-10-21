@@ -22,6 +22,7 @@ function buildFilterQuery(body) {
   }
   return query;
 }
+
 export default {
   //Teacher Attendence create
   async createTeacherAttendence(req, res) {
@@ -56,6 +57,18 @@ export default {
         teacherAttendence: teacherAttendence,
         message: "Teacher Attendence created successfully",
       });
+    } catch (err) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  },
+  async fetchSingleTeacherAttendences(req, res) {
+    let { id, date } = req.body;
+    try {
+      let teacherAttendences = await TEACHERATTENDENCE.find({
+        a_date: date,
+        teacher_id: id,
+      });
+      return res.status(200).json(teacherAttendences);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }

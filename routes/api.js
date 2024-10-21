@@ -301,6 +301,12 @@ Router.post(
   StudentAttendenceController.fetchSingleStudentAttendences
 );
 
+Router.post(
+  "/fetchSingleTeacherAttendences",
+  Authentication,
+  TeacherAttendenceController.fetchSingleTeacherAttendences
+);
+
 //get by values
 Router.get(
   "/getStudentAttendencebyValues",

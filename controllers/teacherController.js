@@ -34,7 +34,6 @@ export default {
         role:request.role,
         password: password
       };
-      console.log(userModelRequest,'userModelRequest');
       const user = await USER.create(userModelRequest);
       let nrequest = { ...request, user_id: user._id };
       let teacher = await TEACHER.create(nrequest);

@@ -23,13 +23,11 @@ export default {
       let finalData = {
         name: TeacherInfo.name,        
         email: TeacherInfo.email,
-        phone_no: TeacherInfo.phone,
+        phone_no: TeacherInfo.phone_no,
         password: TeacherInfo.password,
         role: "2",
       };
-      console.log(finalData, "finalData");
-      console.log(id);
-      let done = await USER.findByIdAndUpdate({ id, finalData });
+      let done = await USER.findByIdAndUpdate(id, finalData);
       let exist = await DEPARTMENT.findOne({ name: request.name });
       if (exist) {
         return res
@@ -43,6 +41,7 @@ export default {
         message: "Department created successfully.",
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
