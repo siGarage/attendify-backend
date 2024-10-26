@@ -211,16 +211,12 @@ export default {
         machine_id: req.body.machine_id,
         role: req.body.role,
       }).then(async (doc) => {
+        console.log(doc);
         if (doc) {
           return res.status(200).send({
             ...doc._doc,
           });
         } else {
-          console.log({
-            machine_id: req.body.machine_id,
-            role: req.body.role,
-            lastUpdate: null,
-          });
           return res.status(200).send({
             machine_id: req.body.machine_id,
             role: req.body.role,
