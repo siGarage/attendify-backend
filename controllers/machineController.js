@@ -214,11 +214,10 @@ export default {
           machine_id: req.body.machine_id,
         })
         .sort({ createdAt: -1 });
-      console.log(data);
-      return {
+      return res.status(200).send({
         role: req.body.role,
         lastUpdate: data?.a_date,
-      };
+      });
     } catch (error) {
       console.error("Error:", error);
     }
