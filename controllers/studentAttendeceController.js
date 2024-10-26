@@ -32,6 +32,7 @@ export default {
   async createStudentAttendence(req, res) {
     try {
       let request = req.body;
+      console.log(request);
       if (Object.keys(request).length == 0) {
         return res.json(reply.failed("All input is required!"));
       }

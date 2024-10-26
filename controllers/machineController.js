@@ -11,7 +11,6 @@ import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
 import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
 import TeacherAttendence from "../models/teacherAttendenceModel.js";
-import StudentAttendence from "../models/studentAttendenceModel.js";
 function findHighestDate(data) {
   let highestDate = null;
   for (const item of data) {
@@ -104,6 +103,7 @@ export default {
   async createStudentAttendanceData(req, res) {
     try {
       let request = req.body;
+      console.log(request);
       const bodyData = req.body;
       const students = await STUDENT.find({});
       const final = mergeArrays(bodyData, students);
@@ -156,6 +156,7 @@ export default {
   async createTeacherAttendanceData(req, res) {
     try {
       let request = req.body;
+      console.log(request);
       const bodyData = req.body;
       const teachers = await TEACHER.find({});
       const final = mergeTArrays(bodyData, teachers);

@@ -20,7 +20,7 @@ const TeacherSchema = new mongoose.Schema(
     current_address: {
       type: String,
     },
-    permeanent_address: {
+    permanent_address: {
       type: String,
       requried: true,
     },
@@ -33,9 +33,10 @@ const TeacherSchema = new mongoose.Schema(
     },
     user_id: {
       type: String,
+      required: true,
     },
     dob: {
-      type: Date,
+      type: String,
     },
     gender: {
       type: String,
@@ -49,6 +50,7 @@ const TeacherSchema = new mongoose.Schema(
     },
     status: {
       type: Boolean,
+      default: true,
     },
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }

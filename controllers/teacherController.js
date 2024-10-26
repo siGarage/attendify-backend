@@ -3,6 +3,7 @@ import USER from "../models/userModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
 import bcrypt from "bcryptjs";
+import Teacher from "../models/teacherModel.js";
 export default {
   //Teacher create
   async createTeacher(req, res) {
@@ -31,8 +32,8 @@ export default {
         name: request.name,
         email: request.email,
         phone_no: request.phone_no,
-        role:request.role,
-        password: password
+        role: request.role,
+        password: password,
       };
       const user = await USER.create(userModelRequest);
       let nrequest = { ...request, user_id: user._id };
@@ -43,7 +44,7 @@ export default {
         message: "Teacher created successfully",
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -127,7 +128,90 @@ export default {
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }
-  }
+  },
+  async createTeacherByCsv(req, res) {
+    try {
+      var csvData = [];
+      const requiredKeys = [
+        "name",
+        "emp_id",
+        "current_address",
+        "email",
+        "permanent_address",
+        "department_id",
+        "gender",
+        "dob",
+        "permanent_address",
+        "current_address",
+        "phone_no",
+      ];
+      const jsonObj = await csv().fromFile(req.file.path);
+      for (const item of jsonObj) {
+        const result = checkMissingKeys(item, requiredKeys);
+        if (result.length === 0) {
+          csvData.push({
+            name: item.name,
+            emp_id: item.roll_no,
+            phone_no: item.phone_no,
+            current_address: item.current_address,
+            permanent_address: item.permanent_address,
+            gender: item.gender,
+            dob: item.dob,
+            email: item.email,
+            department_id: item.department_id,
+            designation: item.designation,
+          });
+        } else {
+          return res.status(202).send({
+            status_code: 202,
+            message: `You have these missing fields in your csv: ${result}`,
+          });
+        }
+      }
+      console.log(csvData);
+      let usersList = await USER.insertMany(csvData);
+      console.log(usersList);
+      await Teacher.insertMany(csvData);
+      return res.status(201).send({
+        status_code: 201,
+        message: "Teacher created successfully",
+      });
+      // await csv()
+      //   .fromFile(req.file.path)
+      //   .then(async (jsonObj) => {
+      //     for (var x = 0; x < jsonObj.length; x++) {
+      //       const result = checkMissingKeys(jsonObj[x], requiredKeys);
+      //       if (result?.length == 0) {
+      //         csvData.push({
+      //           name: jsonObj[x].name,
+      //           roll_no: jsonObj[x].roll_no,
+      //           father_name: jsonObj[x].father_name,
+      //           phone_no: jsonObj[x].phone_no,
+      //           guardian_no: jsonObj[x].guardian_no,
+      //           current_address: jsonObj[x].current_address,
+      //           permanent_address: jsonObj[x].permanent_address,
+      //           batch: jsonObj[x].batch,
+      //           gender: jsonObj[x].gender,
+      //           dob: jsonObj[x].dob,
+      //           email: jsonObj[x].email,
+      //           course_id: req.body.course_id,
+      //           semester_id: req.body.semester_id,
+      //         });
+      //       } else {
+      //         return res.status(202).send({
+      //           status_code: 202,
+      //           message: `You have these missing fields in your csv ${result}`,
+      //         });
+      //       }
+      //     }
+      //     await STUDENT.insertMany(csvData);
+      //     return res.status(204).send({
+      //       status_code: 201,
+      //       message: "Student created successfully",
+      //     });
+      //   });
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };
-
-
