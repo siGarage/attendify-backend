@@ -208,7 +208,7 @@ export default {
     try {
       const data = await (req.body.role == 'Student' ? StudentAttendance : TeacherAttendance).findOne({
         machine_id: req.body.machine_id,
-      }).sort({ createdAt: 1 });
+      }).sort({ createdAt: -1 });
       console.log(data);
       return {
         role: req.body.role,
