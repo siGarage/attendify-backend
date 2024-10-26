@@ -1,7 +1,7 @@
 import STUDENT from "../models/studentModel.js";
 import SUBJECT from "../models/subjectModel.js";
 import COURSE from "../models/courseModel.js";
-import STUDENTATTENDENCE from "../models/studentAttendenceModel.js";
+import StudentAttendance from "../models/studentAttendenceModel.js";
 // import LASTUPDATE from "../models/lastUpdateAttendanceModel.js";
 import SEMESTER from "../models/semesterModel.js";
 import Validator from "validatorjs";
@@ -10,7 +10,7 @@ import USER from "../models/userModel.js";
 import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
 import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
-import TeacherAttendence from "../models/teacherAttendenceModel.js";
+import TeacherAttendance from "../models/teacherAttendenceModel.js";
 function findHighestDate(data) {
   let highestDate = null;
   for (const item of data) {
@@ -108,9 +108,9 @@ export default {
       const final = mergeArrays(bodyData, students);
       for (const item of final) {
         let ditem = { ...item, role: "teacher" };
-        let exit = await STUDENTATTENDENCE.findOne({ ditem });
+        let exit = await StudentAttendance.findOne({ ditem });
         if (!exit) {
-          const attendance = new STUDENTATTENDENCE(item);
+          const attendance = new StudentAttendance(item);
           await attendance.save();
         }
       }
@@ -160,9 +160,9 @@ export default {
       const final = mergeTArrays(bodyData, teachers);
       for (const item of final) {
         let ditem = { ...item, role: "teacher" };
-        let exit = await TeacherAttendence.findOne({ ditem });
+        let exit = await TeacherAttendance.findOne({ ditem });
         if (!exit) {
-          const attendance = new TeacherAttendence(item);
+          const attendance = new TeacherAttendance(item);
           await attendance.save();
         }
       }
@@ -206,24 +206,14 @@ export default {
 
   async getLastUpdate(req, res) {
     try {
-      console.log(req.body);
-      await LastUpdatedAttendance.findOne({
+      const data = await (req.body.role == 'Student' ? StudentAttendance : TeacherAttendance).findOne({
         machine_id: req.body.machine_id,
+      }).sort({ createdAt: 1 });
+      console.log(data);
+      return {
         role: req.body.role,
-      }).then(async (doc) => {
-        console.log(doc);
-        if (doc) {
-          return res.status(200).send({
-            ...doc._doc,
-          });
-        } else {
-          return res.status(200).send({
-            machine_id: req.body.machine_id,
-            role: req.body.role,
-            lastUpdate: null,
-          });
-        }
-      });
+        lastUpdate: data ? data.a_date : null,
+      };
     } catch (error) {
       console.error("Error:", error);
     }
@@ -300,7 +290,7 @@ export default {
 
   async getStundentAttendance(req, res) {
     try {
-      const stundentAttendance = await STUDENTATTENDENCE.find({});
+      const stundentAttendance = await StudentAttendance.find({});
       return res.status(200).json(stundentAttendance);
     } catch (err) {
       console.log(err);
