@@ -103,7 +103,6 @@ export default {
   async createStudentAttendanceData(req, res) {
     try {
       let request = req.body;
-      console.log(request);
       const bodyData = req.body;
       const students = await STUDENT.find({});
       const final = mergeArrays(bodyData, students);
@@ -156,7 +155,6 @@ export default {
   async createTeacherAttendanceData(req, res) {
     try {
       let request = req.body;
-      console.log(request);
       const bodyData = req.body;
       const teachers = await TEACHER.find({});
       const final = mergeTArrays(bodyData, teachers);
