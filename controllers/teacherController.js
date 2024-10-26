@@ -1,5 +1,5 @@
 import TEACHER from "../models/teacherModel.js";
-import USER from "../models/userModel.js";
+import Users from "../models/userModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
 import bcrypt from "bcryptjs";
@@ -21,7 +21,7 @@ export default {
         let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
         return res.json(reply.failed(validation.errors.first(err_key)));
       }
-      let exist = await USER.findOne({ email: request.email });
+      let exist = await Users.findOne({ email: request.email });
       if (exist) {
         return res
           .status(403)
@@ -35,8 +35,8 @@ export default {
         role: request.role,
         password: password,
       };
-      const user = await USER.create(userModelRequest);
-      let nrequest = { ...request, user_id: user._id };
+      const Users = await Users.create(userModelRequest);
+      let nrequest = { ...request, user_id: Users._id };
       let teacher = await TEACHER.create(nrequest);
       return res.status(201).send({
         status_code: 201,
@@ -65,7 +65,7 @@ export default {
       let id = req.query.id;
       const teacherId = await TEACHER.findById(id);
       if (teacherId) {
-        await USER.findByIdAndRemove(teacherId.user_id);
+        await Users.findByIdAndRemove(teacherId.user_id);
         const teacher = await TEACHER.findByIdAndRemove(id);
         if (!teacher) {
           return res.status(404).send({ message: "Teacher not found." });
@@ -131,7 +131,7 @@ export default {
   },
   async createTeacherByCsv(req, res) {
     try {
-      var csvData = [];
+      const csvData = [];
       const requiredKeys = [
         "name",
         "emp_id",
@@ -145,10 +145,10 @@ export default {
         "current_address",
         "phone_no",
       ];
-      const jsonObj = await csv().fromFile(req.file.path);
-      for (const item of jsonObj) {
-        const result = checkMissingKeys(item, requiredKeys);
-        if (result.length === 0) {
+      const parsedCsv = await csv().fromFile(req.file.path);
+      for (const item of parsedCsv) {
+        const errors = checkMissingKeys(item, requiredKeys);
+        if (errors.length === 0) {
           csvData.push({
             name: item.name,
             emp_id: item.roll_no,
@@ -164,43 +164,49 @@ export default {
         } else {
           return res.status(202).send({
             status_code: 202,
-            message: `You have these missing fields in your csv: ${result}`,
+            message: `You have these missing fields in your csv: ${errors}`,
           });
         }
       }
+
+      const usersList=await Users.insertMany(csvData);
       console.log(csvData);
-      let usersList = await USER.insertMany(csvData);
+      Teacher.insertMany(usersList.map(u => ({...u, user_id: u._id})));
+      
+      // const [usersList, _] = await Promise.all([
+      //   Users.insertMany(csvData),
+      //   Teacher.insertMany(csvData)
+      // ]);
       console.log(usersList);
-      await Teacher.insertMany(csvData);
       return res.status(201).send({
         status_code: 201,
         message: "Teacher created successfully",
       });
       // await csv()
       //   .fromFile(req.file.path)
-      //   .then(async (jsonObj) => {
-      //     for (var x = 0; x < jsonObj.length; x++) {
-      //       const result = checkMissingKeys(jsonObj[x], requiredKeys);
-      //       if (result?.length == 0) {
+      //   .then(async (parsedCsv) => {
+      //     for (var x = 0; x < parsedCsv.length; x++) {
+      //       const errors = checkMissingKeys(parsedCsv[x], requiredKeys);
+      //       if (errors?.length == 0) {
       //         csvData.push({
-      //           name: jsonObj[x].name,
-      //           roll_no: jsonObj[x].roll_no,
-      //           father_name: jsonObj[x].father_name,
-      //           phone_no: jsonObj[x].phone_no,
-      //           guardian_no: jsonObj[x].guardian_no,
-      //           current_address: jsonObj[x].current_address,
-      //           permanent_address: jsonObj[x].permanent_address,
-      //           batch: jsonObj[x].batch,
-      //           gender: jsonObj[x].gender,
-      //           dob: jsonObj[x].dob,
-      //           email: jsonObj[x].email,
+      //           name: parsedCsv[x].name,
+      //           roll_no: parsedCsv[x].roll_no,
+      //           father_name: parsedCsv[x].father_name,
+      //           phone_no: parsedCsv[x].phone_no,
+      //           guardian_no: parsedCsv[x].guardian_no,
+      //           current_address: parsedCsv[x].current_address,
+      //           permanent_address: parsedCsv[x].permanent_address,
+      //           batch: parsedCsv[x].batch,
+      //           gender: parsedCsv[x].gender,
+      //           dob: parsedCsv[x].dob,
+      //           email: parsedCsv[x].email,
       //           course_id: req.body.course_id,
       //           semester_id: req.body.semester_id,
       //         });
       //       } else {
       //         return res.status(202).send({
       //           status_code: 202,
-      //           message: `You have these missing fields in your csv ${result}`,
+      //           message: `You have these missing fields in your csv ${errors}`,
       //         });
       //       }
       //     }

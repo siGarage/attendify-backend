@@ -206,14 +206,37 @@ export default {
 
   async getLastUpdate(req, res) {
     try {
-      const data = await (req.body.role == 'Student' ? StudentAttendance : TeacherAttendance).findOne({
-        machine_id: req.body.machine_id,
-      }).sort({ createdAt: -1 });
-      console.log(data);
+      // const data = await (req.body.role == 'Student' ? StudentAttendance : TeacherAttendance).findOne({
+      //   machine_id: req.body.machine_id,
+      // }).sort({ createdAt: -1 });
+      // console.log(data);
       return {
         role: req.body.role,
-        lastUpdate: data ? data.a_date : null,
+        lastUpdate: ((data) => data?.a_date)(
+          await (req.body.role == "Student"
+            ? StudentAttendance
+            : TeacherAttendance
+          )
+            .findOne({
+              machine_id: req.body.machine_id,
+            })
+            .sort({ createdAt: -1 })
+        ),
       };
+
+      // return {
+      //   role: req.body.role,
+      //   lastUpdate: ((data) => (data ? data.a_date : null))(
+      //     await (req.body.role == "Student"
+      //       ? StudentAttendance
+      //       : TeacherAttendance
+      //     )
+      //       .findOne({
+      //         machine_id: req.body.machine_id,
+      //       })
+      //       .sort({ createdAt: -1 })
+      //   ),
+      // };
     } catch (error) {
       console.error("Error:", error);
     }
