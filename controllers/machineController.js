@@ -208,6 +208,7 @@ export default {
 
   async getLastUpdate(req, res) {
     try {
+      console.log(req.body);
       await LastUpdatedAttendance.findOne({
         machine_id: req.body.machine_id,
         role: req.body.role,
@@ -217,6 +218,11 @@ export default {
             ...doc._doc,
           });
         } else {
+          console.log({
+            machine_id: req.body.machine_id,
+            role: req.body.role,
+            lastUpdate: null,
+          });
           return res.status(200).send({
             machine_id: req.body.machine_id,
             role: req.body.role,
