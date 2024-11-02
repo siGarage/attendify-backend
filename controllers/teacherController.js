@@ -4,6 +4,18 @@ import Validator from "validatorjs";
 import reply from "../common/reply.js";
 import bcrypt from "bcryptjs";
 import Teacher from "../models/teacherModel.js";
+import csv from "csvtojson";
+function checkMissingKeys(obj, requiredKeys) {
+  const missingKeys = requiredKeys.filter(
+    (key) => !obj.hasOwnProperty(key) || obj[key].trim() === ""
+  );
+
+  if (missingKeys.length > 0) {
+    return missingKeys.join(", ");
+  } else {
+    return missingKeys;
+  }
+}
 export default {
   //Teacher create
   async createTeacher(req, res) {
@@ -135,7 +147,6 @@ export default {
       const requiredKeys = [
         "name",
         "emp_id",
-        "current_address",
         "email",
         "permanent_address",
         "department_id",
@@ -149,17 +160,20 @@ export default {
       for (const item of parsedCsv) {
         const errors = checkMissingKeys(item, requiredKeys);
         if (errors.length === 0) {
+          let password = bcrypt.hashSync(item.dob);
           csvData.push({
             name: item.name,
-            emp_id: item.roll_no,
+            emp_id: item.emp_id,
             phone_no: item.phone_no,
             current_address: item.current_address,
             permanent_address: item.permanent_address,
             gender: item.gender,
+            password: password,
             dob: item.dob,
             email: item.email,
             department_id: item.department_id,
             designation: item.designation,
+            role:"3"
           });
         } else {
           return res.status(202).send({
@@ -168,16 +182,23 @@ export default {
           });
         }
       }
-
-      const usersList=await Users.insertMany(csvData);
-      console.log(csvData);
-      Teacher.insertMany(usersList.map(u => ({...u, user_id: u._id})));
-      
+      const usersList = await Users.insertMany(csvData);
+      const finalData = csvData.map((tea) => {
+        const usersListAfterMerge = usersList.find(
+          (user) => user.email === tea.email
+        );
+        return {
+          ...tea,
+          user_id: usersListAfterMerge._id.toString(),
+        };
+      });
+      // console.log(usersList,"katuikk");
+      Teacher.insertMany(finalData);
       // const [usersList, _] = await Promise.all([
       //   Users.insertMany(csvData),
       //   Teacher.insertMany(csvData)
       // ]);
-      console.log(usersList);
+      // console.log(usersList);
       return res.status(201).send({
         status_code: 201,
         message: "Teacher created successfully",

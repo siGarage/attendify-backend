@@ -105,6 +105,12 @@ Router.post(
   TeacherController.createTeacher
 );
 
+Router.post(
+  "/createTeacherByCsv",
+  upload.single("csv"),
+  TeacherController.createTeacherByCsv
+);
+
 //Get Teachers
 Router.get("/getTeachers", Authentication, TeacherController.getTeacherList);
 
@@ -420,11 +426,7 @@ Router.post(
   Authentication,
   MachineController.createTeacherAttendanceData
 );
-Router.post(
-  "/getLastUpdate",
-  Authentication,
-  MachineController.getLastUpdate
-);
+Router.post("/getLastUpdate", Authentication, MachineController.getLastUpdate);
 Router.post(
   "/createBioMetricData",
   Authentication,
