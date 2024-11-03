@@ -98,12 +98,12 @@ export default {
   // Get Student Attendence List
   async fetchStudentAttendenceList(req, res) {
     const filterQuery = buildFilterQuery(req.body);
-    console.log(filterQuery);
     try {
       let studentAttendences = await STUDENTATTENDENCE.find(filterQuery);
-      console.log(studentAttendences,"studentAttendences");
       const filteredData = [];
       for (let i = 0; i < studentAttendences.length; i++) {
+        console.log(studentAttendences[i].a_date);
+        console.log(req.body.fromdate,req.body.endDate);
         const currentDate = studentAttendences[i].a_date;
         if (
           currentDate >= req.body.fromdate &&
