@@ -22,17 +22,16 @@ function findHighestDate(data) {
   return highestDate;
 }
 function mergeArrays(filteredData, bios) {
-  console.log(filteredData,bios);
   const mergedArray = [];
   filteredData.forEach(async (attendance) => {
-    const matchingStudent = bios.find(
-      (student) => student?._id.toHexString() === attendance?.student_id
+    const matchingTeacher = bios.find(
+      (teacher) => teacher?._id.toHexString() === attendance?.student_id
     );
-    if (matchingStudent) {
+    if (matchingTeacher) {
       mergedArray.push({
         ...attendance,
-        roll_no: matchingStudent?._doc?.roll_no,
-        batch: matchingStudent?._doc?.batch,
+        roll_no: matchingTeacher?._doc?.roll_no,
+        batch: matchingTeacher?._doc?.batch,
       });
     } else {
       mergedArray.push(attendance);
@@ -41,16 +40,16 @@ function mergeArrays(filteredData, bios) {
   return mergedArray;
 }
 function mergeTArrays(filteredData, bios) {
-  console.log(filteredData,bios);
   const mergedArray = [];
   filteredData.forEach(async (attendance) => {
-    const matchingStudent = bios.find(
-      (student) => student?._id?.toHexString() === attendance?.teacher_id
+    const matchingTeacher = bios.find(
+      (teacher) => teacher?._id?.toHexString() === attendance?.teacher_id
     );
-    if (matchingStudent) {
+    if (matchingTeacher) {
+      console.log(matchingTeacher);
       mergedArray.push({
         ...attendance,
-        emp_id: matchingStudent?._doc?.emp_id,
+        emp_id: matchingTeacher?._doc?.emp_id,
       });
     } else {
       mergedArray.push(attendance);
@@ -157,7 +156,6 @@ export default {
     try {
       let request = req.body;
       const bodyData = req.body;
-      console.log(bodyData);
       const teachers = await TEACHER.find({});
       const final = mergeTArrays(bodyData, teachers);
       for (const item of final) {
