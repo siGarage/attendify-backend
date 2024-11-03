@@ -157,9 +157,11 @@ export default {
       const bodyData = req.body;
       const teachers = await TEACHER.find({});
       const final = mergeTArrays(bodyData, teachers);
+      console.log(final);
       for (const item of final) {
-        let ditem = { ...item, role: "teacher" };
+        let ditem = { ...item };
         let exit = await TeacherAttendance.findOne({ ditem });
+        console.log(exit);
         if (!exit) {
           const attendance = new TeacherAttendance(item);
           await attendance.save();
