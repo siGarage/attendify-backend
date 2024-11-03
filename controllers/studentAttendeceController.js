@@ -102,8 +102,6 @@ export default {
       let studentAttendences = await STUDENTATTENDENCE.find(filterQuery);
       const filteredData = [];
       for (let i = 0; i < studentAttendences.length; i++) {
-        console.log(studentAttendences[i].a_date);
-        console.log(req.body.fromdate,req.body.endDate);
         const currentDate = studentAttendences[i].a_date;
         if (
           currentDate >= req.body.fromdate &&

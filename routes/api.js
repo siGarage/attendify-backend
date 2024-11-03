@@ -418,12 +418,10 @@ Router.get(
 );
 Router.post(
   "/createStudentAttendanceData",
-  Authentication,
   MachineController.createStudentAttendanceData
 );
 Router.post(
   "/createTeacherAttendanceData",
-  Authentication,
   MachineController.createTeacherAttendanceData
 );
 Router.post("/getLastUpdate", Authentication, MachineController.getLastUpdate);
