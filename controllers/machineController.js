@@ -39,10 +39,11 @@ function mergeArrays(filteredData, bios) {
   });
   return mergedArray;
 }
-function mergeTArrays(filteredData, bios) {
+function mergeTArrays(bodyData, teachers) {
   const mergedArray = [];
-  filteredData.forEach(async (attendance) => {
-    const matchingTeacher = bios.find(
+  console.log(bodyData, teachers);
+  bodyData?.forEach(async (attendance) => {
+    const matchingTeacher = teachers.find(
       (teacher) => teacher?._id?.toHexString() === attendance?.teacher_id
     );
     if (matchingTeacher) {
@@ -153,53 +154,16 @@ export default {
 
   async createTeacherAttendanceData(req, res) {
     try {
-      let request = req.body;
       const bodyData = req.body;
       const teachers = await TEACHER.find({});
       const final = mergeTArrays(bodyData, teachers);
-      console.log(final);
       for (const item of final) {
-        let ditem = { ...item };
-        let exit = await TeacherAttendance.findOne({ ditem });
-        console.log(exit);
-        if (!exit) {
-          const attendance = new TeacherAttendance(item);
-          await attendance.save();
-        }
+        const attendance = new TeacherAttendance(item);
+        await attendance.save();
       }
-      let highestDate = findHighestDate(request);
-      if (highestDate) {
-        await LastUpdatedAttendance.findOne({
-          machine_id: request[0].machine_id,
-        }).then(async (doc) => {
-          if (doc) {
-            let id = doc._id;
-            let uLastData = {
-              machine_id: request[0].machine_id,
-              role: "Teacher",
-              lastUpdate: highestDate,
-            };
-            await LastUpdatedAttendance.findOneAndUpdate(
-              { _id: id },
-              uLastData
-            );
-            return res.status(200).send({
-              message: "Teacher Attendence created successfully",
-            });
-          } else {
-            let lastData = {
-              machine_id: request[0].machine_id,
-              lastUpdate: highestDate,
-              role: "Teacher",
-            };
-            const lastUdpate = new LastUpdatedAttendance(lastData);
-            await lastUdpate.save();
-            return res.status(200).send({
-              message: "Teacher Attendence created successfully",
-            });
-          }
-        });
-      }
+      return res.status(200).send({
+        message: "Teacher Attendance created successfully.",
+      });
     } catch (error) {
       console.error("Error:", error);
     }
