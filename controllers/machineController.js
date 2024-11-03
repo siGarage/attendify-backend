@@ -41,7 +41,6 @@ function mergeArrays(filteredData, bios) {
 }
 function mergeTArrays(bodyData, teachers) {
   const mergedArray = [];
-  console.log(bodyData, teachers);
   bodyData?.forEach(async (attendance) => {
     const matchingTeacher = teachers.find(
       (teacher) => teacher?._id?.toHexString() === attendance?.teacher_id
