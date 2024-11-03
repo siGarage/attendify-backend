@@ -11,7 +11,6 @@ import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
 import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
 import TeacherAttendance from "../models/teacherAttendenceModel.js";
-import { filter } from "lodash";
 function findHighestDate(data) {
   let highestDate = null;
   for (const item of data) {
