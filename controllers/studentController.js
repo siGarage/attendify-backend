@@ -145,6 +145,7 @@ export default {
       for (const item of jsonObj) {
         const result = checkMissingKeys(item, requiredKeys);
         if (result.length === 0) {
+          let password = bcrypt.hashSync(item.dob);
           csvData.push({
             name: item.name,
             roll_no: item.roll_no,
@@ -154,11 +155,13 @@ export default {
             current_address: item.current_address,
             permanent_address: item.permanent_address,
             batch: item.batch,
+            password: password,
             gender: item.gender,
             dob: item.dob,
             email: item.email,
             course_id: req.body.course_id,
             semester_id: req.body.semester_id,
+            role: "4",
           });
         } else {
           return res.status(202).send({
@@ -167,8 +170,17 @@ export default {
           });
         }
       }
-
-      await STUDENT.insertMany(csvData);
+      const usersList = await Users.insertMany(csvData);
+      const finalData = csvData.map((tea) => {
+        const usersListAfterMerge = usersList.find(
+          (user) => user.email === tea.email
+        );
+        return {
+          ...tea,
+          user_id: usersListAfterMerge._id.toString(),
+        };
+      });
+      STUDENT.insertMany(finalData);
       return res.status(201).send({
         status_code: 201,
         message: "Student created successfully",
