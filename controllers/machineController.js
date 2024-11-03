@@ -153,18 +153,21 @@ export default {
 
   async createTeacherAttendanceData(req, res) {
     try {
-      const bodyData = req.body;
-      const teachers = await TEACHER.find({});
-      const final = mergeTArrays(bodyData, teachers);
-      for (const item of final) {
-        const attendance = new TeacherAttendance(item);
-        await attendance.save();
-      }
+      const teacherIds = req.body.map((d) => d.teacher_id);
+      const teachers = await TEACHER.find({ _id: { $in: teacherIds } });
+      const final = req.body.map((d) => ({
+        ...d,
+        emp_id: teachers.find((t) => t._id == d.teacher_id)?.emp_id,
+      }));
+      const result = await TeacherAttendance.insertMany(final);
       return res.status(200).send({
-        message: "Teacher Attendance created successfully.",
+        message: `${result.length} records of Teacher Attendance created successfully`,
       });
     } catch (error) {
       console.error("Error:", error);
+      return res.status(500).send({
+        message: error,
+      });
     }
   },
 
