@@ -424,7 +424,7 @@ Router.post(
   "/createTeacherAttendanceData",
   MachineController.createTeacherAttendanceData
 );
-Router.post("/getLastUpdate", Authentication, MachineController.getLastUpdate);
+Router.post("/getLastUpdate", MachineController.getLastUpdate);
 Router.post(
   "/createBioMetricData",
   Authentication,
