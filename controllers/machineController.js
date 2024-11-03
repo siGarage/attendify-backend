@@ -102,50 +102,17 @@ export default {
   // Get Courses List
   async createStudentAttendanceData(req, res) {
     try {
-      let request = req.body;
-      const students = await STUDENT.find({});
-      const final = mergeArrays(request, students);
-      for (const item of final) {
-        let ditem = { ...item, role: "teacher" };
-        let exit = await StudentAttendance.findOne({ ditem });
-        if (!exit) {
-          const attendance = new StudentAttendance(item);
-          await attendance.save();
-        }
-      }
-      // let highestDate = findHighestDate(request);
-      // if (highestDate) {
-      //   await LastUpdatedAttendance.findOne({
-      //     machine_id: request[0].machine_id,
-      //   }).then(async (doc) => {
-      //     if (doc) {
-      //       let id = doc._id;
-      //       let uLastData = {
-      //         machine_id: request[0].machine_id,
-      //         role: "Student",
-      //         lastUpdate: highestDate,
-      //       };
-      //       await LastUpdatedAttendance.findOneAndUpdate(
-      //         { _id: id },
-      //         uLastData
-      //       );
-      //       return res.status(200).send({
-      //         message: "Student Attendence created successfully",
-      //       });
-      //     } else {
-      //       let lastData = {
-      //         machine_id: request[0].machine_id,
-      //         lastUpdate: highestDate,
-      //         role: "Student",
-      //       };
-      //       const lastUdpate = new LastUpdatedAttendance(lastData);
-      //       await lastUdpate.save();
-      //       return res.status(200).send({
-      //         message: "Student Attendence created successfully",
-      //       });
-      //     }
-      //   });
-      // }
+      const studentIds = req.body.map((d) => d.student_id);
+      const students = await STUDENT.find({ _id: { $in: studentIds } });
+      const final = req.body.map((d) => ({
+        ...d,
+        roll_no: students.find((t) => t._id == d.student_id)?.roll_no,
+        batch: students.find((t) => t._id == d.student_id)?.batch,
+      }));
+      const result = await StudentAttendance.insertMany(final);
+      return res.status(200).send({
+        message: `${result.length} records of Student Attendance created successfully`,
+      });
     } catch (error) {
       console.error("Error:", error);
     }
