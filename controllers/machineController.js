@@ -46,10 +46,9 @@ function mergeTArrays(filteredData, bios) {
       (teacher) => teacher?._id?.toHexString() === attendance?.teacher_id
     );
     if (matchingTeacher) {
-      console.log(matchingTeacher);
       mergedArray.push({
         ...attendance,
-        emp_id: matchingTeacher?._doc?.emp_id,
+        emp_id: matchingTeacher?.emp_id,
       });
     } else {
       mergedArray.push(attendance);
