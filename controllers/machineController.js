@@ -156,6 +156,7 @@ export default {
     try {
       let request = req.body;
       const bodyData = req.body;
+      console.log(bodyData);
       const teachers = await TEACHER.find({});
       const final = mergeTArrays(bodyData, teachers);
       for (const item of final) {
