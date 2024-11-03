@@ -11,6 +11,7 @@ import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
 import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
 import TeacherAttendance from "../models/teacherAttendenceModel.js";
+import { filter } from "lodash";
 function findHighestDate(data) {
   let highestDate = null;
   for (const item of data) {
@@ -22,16 +23,17 @@ function findHighestDate(data) {
   return highestDate;
 }
 function mergeArrays(filteredData, bios) {
+  console.log(filteredData,bios);
   const mergedArray = [];
   filteredData.forEach(async (attendance) => {
     const matchingStudent = bios.find(
-      (student) => student._id.toHexString() === attendance.student_id
+      (student) => student?._id.toHexString() === attendance?.student_id
     );
     if (matchingStudent) {
       mergedArray.push({
         ...attendance,
-        roll_no: matchingStudent._doc.roll_no,
-        batch: matchingStudent._doc.batch,
+        roll_no: matchingStudent?._doc?.roll_no,
+        batch: matchingStudent?._doc?.batch,
       });
     } else {
       mergedArray.push(attendance);
@@ -40,15 +42,16 @@ function mergeArrays(filteredData, bios) {
   return mergedArray;
 }
 function mergeTArrays(filteredData, bios) {
+  console.log(filteredData,bios);
   const mergedArray = [];
   filteredData.forEach(async (attendance) => {
     const matchingStudent = bios.find(
-      (student) => student._id.toHexString() === attendance.teacher_id
+      (student) => student?._id?.toHexString() === attendance?.teacher_id
     );
     if (matchingStudent) {
       mergedArray.push({
         ...attendance,
-        emp_id: matchingStudent._doc.emp_id,
+        emp_id: matchingStudent?._doc?.emp_id,
       });
     } else {
       mergedArray.push(attendance);
@@ -103,9 +106,8 @@ export default {
   async createStudentAttendanceData(req, res) {
     try {
       let request = req.body;
-      const bodyData = req.body;
       const students = await STUDENT.find({});
-      const final = mergeArrays(bodyData, students);
+      const final = mergeArrays(request, students);
       for (const item of final) {
         let ditem = { ...item, role: "teacher" };
         let exit = await StudentAttendance.findOne({ ditem });
@@ -114,39 +116,39 @@ export default {
           await attendance.save();
         }
       }
-      let highestDate = findHighestDate(request);
-      if (highestDate) {
-        await LastUpdatedAttendance.findOne({
-          machine_id: request[0].machine_id,
-        }).then(async (doc) => {
-          if (doc) {
-            let id = doc._id;
-            let uLastData = {
-              machine_id: request[0].machine_id,
-              role: "Student",
-              lastUpdate: highestDate,
-            };
-            await LastUpdatedAttendance.findOneAndUpdate(
-              { _id: id },
-              uLastData
-            );
-            return res.status(200).send({
-              message: "Student Attendence created successfully",
-            });
-          } else {
-            let lastData = {
-              machine_id: request[0].machine_id,
-              lastUpdate: highestDate,
-              role: "Student",
-            };
-            const lastUdpate = new LastUpdatedAttendance(lastData);
-            await lastUdpate.save();
-            return res.status(200).send({
-              message: "Student Attendence created successfully",
-            });
-          }
-        });
-      }
+      // let highestDate = findHighestDate(request);
+      // if (highestDate) {
+      //   await LastUpdatedAttendance.findOne({
+      //     machine_id: request[0].machine_id,
+      //   }).then(async (doc) => {
+      //     if (doc) {
+      //       let id = doc._id;
+      //       let uLastData = {
+      //         machine_id: request[0].machine_id,
+      //         role: "Student",
+      //         lastUpdate: highestDate,
+      //       };
+      //       await LastUpdatedAttendance.findOneAndUpdate(
+      //         { _id: id },
+      //         uLastData
+      //       );
+      //       return res.status(200).send({
+      //         message: "Student Attendence created successfully",
+      //       });
+      //     } else {
+      //       let lastData = {
+      //         machine_id: request[0].machine_id,
+      //         lastUpdate: highestDate,
+      //         role: "Student",
+      //       };
+      //       const lastUdpate = new LastUpdatedAttendance(lastData);
+      //       await lastUdpate.save();
+      //       return res.status(200).send({
+      //         message: "Student Attendence created successfully",
+      //       });
+      //     }
+      //   });
+      // }
     } catch (error) {
       console.error("Error:", error);
     }
