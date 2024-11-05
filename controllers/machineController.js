@@ -159,11 +159,13 @@ export default {
 
   async createBioMetricData(req, res) {
     try {
-      console.log(req.body);
-      let request = req.body;
-      if (Object.keys(request).length == 0) {
-        return res.json(reply.failed("All input is required!"));
+      const request = req.body;
+      for(let key of Object.keys(request)) {
+        if(request[key].startsWith('"')) {
+          request[key] = request[key].replace(/^"|"$/g, '');
+        }
       }
+      console.log(request);
       let validation = new Validator(request, {
         user_id: "required",
         type: "required",
@@ -180,8 +182,7 @@ export default {
         type: request.type,
       });
       if (exist) {
-        let _id = req.body.id;
-        await Biometric.findByIdAndUpdate(_id, request);
+        await Biometric.findByIdAndUpdate(exist._id, request);
         return res.json({ message: "Biometric updated successfully" });
       }
       await Biometric.create(request);
