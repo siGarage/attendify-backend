@@ -159,6 +159,7 @@ export default {
 
   async createBioMetricData(req, res) {
     try {
+      console.log(req.body);
       let request = req.body;
       if (Object.keys(request).length == 0) {
         return res.json(reply.failed("All input is required!"));
