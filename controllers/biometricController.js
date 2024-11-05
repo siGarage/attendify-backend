@@ -24,6 +24,7 @@ export default {
         try {
             console.log(req.params);
             const biometrics = await BIOMETRIC.find()
+                .sort({ user_id: 1 })
                 .skip(+(req.params.skip ?? '0'))
                 .limit(+(req.params.limit ?? '10'));
             return res.status(200).json(biometrics);
