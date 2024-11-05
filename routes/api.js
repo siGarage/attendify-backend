@@ -17,7 +17,7 @@ import bodyParser from "body-parser";
 
 import examController from "../controllers/examController.js";
 
-const Router = express.Router();
+const Router = express.Router({mergeParams: true});
 Router.use(bodyParser.json());
 
 var storage = multer.diskStorage({
@@ -133,6 +133,13 @@ Router.post(
   "/createBiometric",
   Authentication,
   BiometricController.createBiometric
+);
+
+//Get Biometrics
+Router.get(
+  "/biometrics/:skip/:take",
+  Authentication,
+  BiometricController.getBiometricListForDevice
 );
 
 //Get Biometrics

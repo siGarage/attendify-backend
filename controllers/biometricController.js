@@ -20,6 +20,18 @@ export default {
         }
     },
 
+    async getBiometricListForDevice(req, res) {
+        try {
+            console.log(req.params);
+            const biometrics = await BIOMETRIC.find()
+                .skip(+(req.params.skip ?? '0'))
+                .limit(+(req.params.limit ?? '10'));
+            return res.status(200).json(biometrics);
+        } catch (err) {
+            return res.status(500).send({ message: "Internal Server Error" })
+        }
+    },
+
 
     // Get Biometrics List
     async getBiometricList(req, res) {
