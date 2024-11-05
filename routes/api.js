@@ -428,6 +428,7 @@ Router.post("/getLastUpdate", MachineController.getLastUpdate);
 Router.post(
   "/createBioMetricData",
   Authentication,
+  upload.none(),
   MachineController.createBioMetricData
 );
 Router.get(
