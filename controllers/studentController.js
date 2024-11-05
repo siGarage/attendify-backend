@@ -170,7 +170,7 @@ export default {
           });
         }
       }
-      const usersList = await Users.insertMany(csvData);
+      const usersList = await User.insertMany(csvData);
       const finalData = csvData.map((tea) => {
         const usersListAfterMerge = usersList.find(
           (user) => user.email === tea.email

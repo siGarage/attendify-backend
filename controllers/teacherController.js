@@ -47,8 +47,8 @@ export default {
         role: request.role,
         password: password,
       };
-      const Users = await Users.create(userModelRequest);
-      let nrequest = { ...request, user_id: Users._id };
+      const user = await Users.create(userModelRequest);
+      let nrequest = { ...request, user_id: user._id };
       let teacher = await TEACHER.create(nrequest);
       return res.status(201).send({
         status_code: 201,

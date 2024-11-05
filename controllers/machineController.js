@@ -5,7 +5,7 @@ import StudentAttendance from "../models/studentAttendenceModel.js";
 // import LASTUPDATE from "../models/lastUpdateAttendanceModel.js";
 import SEMESTER from "../models/semesterModel.js";
 import Validator from "validatorjs";
-import BIOMETRIC from "../models/biometricModel.js";
+import Biometric from "../models/biometricModel.js";
 import USER from "../models/userModel.js";
 import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
@@ -102,50 +102,17 @@ export default {
   // Get Courses List
   async createStudentAttendanceData(req, res) {
     try {
-      let request = req.body;
-      const students = await STUDENT.find({});
-      const final = mergeArrays(request, students);
-      for (const item of final) {
-        let ditem = { ...item, role: "teacher" };
-        let exit = await StudentAttendance.findOne({ ditem });
-        if (!exit) {
-          const attendance = new StudentAttendance(item);
-          await attendance.save();
-        }
-      }
-      // let highestDate = findHighestDate(request);
-      // if (highestDate) {
-      //   await LastUpdatedAttendance.findOne({
-      //     machine_id: request[0].machine_id,
-      //   }).then(async (doc) => {
-      //     if (doc) {
-      //       let id = doc._id;
-      //       let uLastData = {
-      //         machine_id: request[0].machine_id,
-      //         role: "Student",
-      //         lastUpdate: highestDate,
-      //       };
-      //       await LastUpdatedAttendance.findOneAndUpdate(
-      //         { _id: id },
-      //         uLastData
-      //       );
-      //       return res.status(200).send({
-      //         message: "Student Attendence created successfully",
-      //       });
-      //     } else {
-      //       let lastData = {
-      //         machine_id: request[0].machine_id,
-      //         lastUpdate: highestDate,
-      //         role: "Student",
-      //       };
-      //       const lastUdpate = new LastUpdatedAttendance(lastData);
-      //       await lastUdpate.save();
-      //       return res.status(200).send({
-      //         message: "Student Attendence created successfully",
-      //       });
-      //     }
-      //   });
-      // }
+      const studentIds = req.body.map((d) => d.student_id);
+      const students = await STUDENT.find({ _id: { $in: studentIds } });
+      const final = req.body.map((d) => ({
+        ...d,
+        roll_no: students.find((t) => t._id == d.student_id)?.roll_no,
+        batch: students.find((t) => t._id == d.student_id)?.batch,
+      }));
+      const result = await StudentAttendance.insertMany(final);
+      return res.status(200).send({
+        message: `${result.length} records of Student Attendance created successfully`,
+      });
     } catch (error) {
       console.error("Error:", error);
     }
@@ -153,18 +120,21 @@ export default {
 
   async createTeacherAttendanceData(req, res) {
     try {
-      const bodyData = req.body;
-      const teachers = await TEACHER.find({});
-      const final = mergeTArrays(bodyData, teachers);
-      for (const item of final) {
-        const attendance = new TeacherAttendance(item);
-        await attendance.save();
-      }
+      const teacherIds = req.body.map((d) => d.teacher_id);
+      const teachers = await TEACHER.find({ _id: { $in: teacherIds } });
+      const final = req.body.map((d) => ({
+        ...d,
+        emp_id: teachers.find((t) => t._id == d.teacher_id)?.emp_id,
+      }));
+      const result = await TeacherAttendance.insertMany(final);
       return res.status(200).send({
-        message: "Teacher Attendance created successfully.",
+        message: `${result.length} records of Teacher Attendance created successfully`,
       });
     } catch (error) {
       console.error("Error:", error);
+      return res.status(500).send({
+        message: error,
+      });
     }
   },
 
@@ -199,24 +169,25 @@ export default {
         finger_id_1: "required",
         finger_id_2: "required",
         finger_id_3: "required",
+        face: null,
       });
       if (validation.fails()) {
         let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
         return res.json(reply.failed(validation.errors.first(err_key)));
       }
-      let exist = await BIOMETRIC.findOne({
-        user_id: request.user_id,
+      let exist = await Biometric.findOne({
+        user_id: request.user_id
       });
       if (exist) {
         let _id = req.body.id;
-        await BIOMETRIC.findByIdAndUpdate(_id, request);
+        await Biometric.findByIdAndUpdate(_id, request);
         return res
           .status(201)
           .send({ message: "Biometric updated successfully" });
       }
-      let Biometric = await BIOMETRIC.create(request);
+      let BiometricData = await Biometric.create(request);
       return res.status(200).send({
-        Biometric: Biometric,
+        BiometricData: BiometricData,
         message: "Biometric created successfully",
       });
     } catch (err) {
