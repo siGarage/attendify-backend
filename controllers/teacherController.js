@@ -1,9 +1,8 @@
-import TEACHER from "../models/teacherModel.js";
+import Teacher from "../models/teacherModel.js";
 import Users from "../models/userModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
 import bcrypt from "bcryptjs";
-import Teacher from "../models/teacherModel.js";
 import csv from "csvtojson";
 function checkMissingKeys(obj, requiredKeys) {
   const missingKeys = requiredKeys.filter(
@@ -49,7 +48,7 @@ export default {
       };
       const user = await Users.create(userModelRequest);
       let nrequest = { ...request, user_id: user._id };
-      let teacher = await TEACHER.create(nrequest);
+      let teacher = await Teacher.create(nrequest);
       return res.status(201).send({
         status_code: 201,
         teacher: teacher,
@@ -64,7 +63,7 @@ export default {
   // Get Teacher List
   async getTeacherList(req, res) {
     try {
-      let students = await TEACHER.find();
+      let students = await Teacher.find();
       return res.status(200).json(students);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
@@ -75,10 +74,10 @@ export default {
   async deleteTeacher(req, res) {
     try {
       let id = req.query.id;
-      const teacherId = await TEACHER.findById(id);
+      const teacherId = await Teacher.findById(id);
       if (teacherId) {
         await Users.findByIdAndRemove(teacherId.user_id);
-        const teacher = await TEACHER.findByIdAndRemove(id);
+        const teacher = await Teacher.findByIdAndRemove(id);
         if (!teacher) {
           return res.status(404).send({ message: "Teacher not found." });
         }
@@ -94,48 +93,30 @@ export default {
   },
 
   //Update Teacher
-  // async updateStudent(req, res) {
-  //     try {
-  //         let request = req.body;
-  //         const image = req?.file?.filename;
-  //         if (!request) {
-  //             return res.json(reply.failed("All input is required"));
-  //         }
-  //         const examMain = await Exam.findById({ _id: req.body.id });
-  //         if (!examMain) {
-  //             return res.json(reply.failed("Exam not found!!"))
-  //         }
-  //         var exam = await Exam.findOneAndUpdate(
-  //             { _id: req.body.id },
-  //             {
-  //                 $set: {
-  //                     image: image,
-  //                     name: req.body.name,
-  //                     description: req.body.description,
-  //                     elg_class: req.body.elg_class,
-  //                     elg_dob: req.body.elg_dob,
-  //                     admission_process: req.body.admission_process,
-  //                     language: req.body.language,
-  //                     examSeats: req.body.examSeats,
-  //                     date_exam: req.body.date_exam,
-  //                     shortName: req.body.shortName
-  //                 },
-  //             }
-  //         );
-  //         if (exam) {
-  //             return res.status(200).send({ "exam": exam, message: "Exam updated successfully." });
-  //         }
-  //         return res.status(200).send({users: request, message: "Exam updated successfully." });
-  //     } catch (err) {
-  //         console.log(err);
-  //         return res.status(400).send(err)
-  //     }
-  // },
+  async updateTeacher(req, res) {
+    try {
+      let request = req.body;
+      if (!request) {
+        return res.send("All input is required!");
+      }
+      let _id = req.body.id;
+      const teacher = await Teacher.findById(_id);
+      if (!teacher) {
+        return res.status(404).send({ message: "Teacher not found" });
+      }
+      await Teacher.findByIdAndUpdate(_id, request);
+      return res
+        .status(201)
+        .send({ teacher: request, message: "Teacher updated successfully" });
+    } catch (err) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  },
 
   // Get teacher By Id
   async getTeacherById(req, res) {
     try {
-      const teacher = await TEACHER.findById(req.body.id);
+      const teacher = await Teacher.findById(req.body.id);
       return res.status(200).json(teacher);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
@@ -173,7 +154,7 @@ export default {
             email: item.email,
             department_id: item.department_id,
             designation: item.designation,
-            role:"3"
+            role: "3",
           });
         } else {
           return res.status(202).send({

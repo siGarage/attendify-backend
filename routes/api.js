@@ -17,7 +17,7 @@ import bodyParser from "body-parser";
 
 import examController from "../controllers/examController.js";
 
-const Router = express.Router({mergeParams: true});
+const Router = express.Router({ mergeParams: true });
 Router.use(bodyParser.json());
 
 var storage = multer.diskStorage({
@@ -120,6 +120,8 @@ Router.delete(
   Authentication,
   TeacherController.deleteTeacher
 );
+
+Router.put("/updateTeacher", Authentication, TeacherController.updateTeacher);
 
 //Get Teacher By Id
 Router.post(
