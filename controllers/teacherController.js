@@ -104,10 +104,22 @@ export default {
       if (!teacher) {
         return res.status(404).send({ message: "Teacher not found" });
       }
-      await Teacher.findByIdAndUpdate(_id, request);
-      return res
-        .status(201)
-        .send({ teacher: request, message: "Teacher updated successfully" });
+      if (req.body.role == "2") {
+        await Teacher.findOneAndUpdate(
+          { role: "2", department_id: req.body.department_id },
+          { $set: { role: "3" } },
+          { new: true }
+        );
+        await Teacher.findByIdAndUpdate(_id, request);
+        return res
+          .status(201)
+          .send({ teacher: request, message: "Teacher updated successfully" });
+      } else {
+        await Teacher.findByIdAndUpdate(_id, request);
+        return res
+          .status(201)
+          .send({ teacher: request, message: "Teacher updated successfully" });
+      }
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }
