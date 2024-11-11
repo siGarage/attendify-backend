@@ -101,8 +101,8 @@ export default {
         return res.send("All input is required!");
       }
       let _id = req.body.id;
-      const teacher = await Teacher.findById(_id);
-      if (!teacher) {
+      const reqTeacher = await Teacher.findById(_id);
+      if (!reqTeacher) {
         return res.status(404).send({ message: "Teacher not found" });
       }
       const teachers = await Teacher.find({});
@@ -122,9 +122,9 @@ export default {
           { $set: { role: "3" } },
           { new: true }
         );
-        console.log(teacher);
+        console.log(reqTeacher);
         await User.findOneAndUpdate(
-          { phone_no: teacher.phone_no },
+          { phone_no: reqTeacher.phone_no },
           { $set: { role: "2" } },
           { new: true }
         );
