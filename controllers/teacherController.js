@@ -110,33 +110,29 @@ export default {
         (d) => d.department_id == req.body.department_id
       );
       const teacherUserIds = teacherList.map((d) => d.user_id);
-      const Users = User.find();
+      const Users = await User.find({});
       if (req.body.role == "2") {
-        let findUserId = [];
-        teacherUserIds.forEach((tu) => {
-          let theUser = Users.forEach((u) => {
-            tu.user_id == u._id && u.role == "2";
-          });
-          findUserId.push(theUser);
-        });
-        console.log(findUserId);
-        const test = await User.findOneAndUpdate(
-          { role: "2", _id: req.body.user_id },
+        const filteredA2 = Users.filter(
+          (record) =>
+            teacherUserIds.includes(record._id.toString()) &&
+            record.role === "2"
+        );
+        console.log(filteredA2);
+        await User.findOneAndUpdate(
+          { phone_no: filteredA2[0].phone_no },
           { $set: { role: "3" } },
           { new: true }
         );
-        console.log(test, "kartik1");
+        await User.findOneAndUpdate(
+          { _id: teacher.user_id },
+          { $set: { role: "2" } },
+          { new: true }
+        );
         await Teacher.findByIdAndUpdate(_id, request);
         return res
           .status(201)
           .send({ teacher: request, message: "Teacher updated successfully" });
       } else {
-        const teast2 = await User.findOneAndUpdate(
-          { _id: req.body.user_id },
-          { $set: { role: "2" } },
-          { new: true }
-        );
-        console.log(teast2, "kartik2");
         await Teacher.findByIdAndUpdate(_id, request);
         return res
           .status(201)
