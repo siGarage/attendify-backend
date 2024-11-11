@@ -1,5 +1,6 @@
-import DEPARTMENT from "../models/departmentModel.js";
-import USER from "../models/userModel.js";
+import Department from "../models/departmentModel.js";
+import User from "../models/userModel.js";
+import Teacher from "../models/teacherModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
 
@@ -21,20 +22,20 @@ export default {
       // let TeacherInfo = await USER.findById(request.hod);
       // let id = request.hod;
       // let finalData = {
-      //   name: TeacherInfo.name,        
+      //   name: TeacherInfo.name,
       //   email: TeacherInfo.email,
       //   phone_no: TeacherInfo.phone_no,
       //   password: TeacherInfo.password,
       //   role: "2",
       // };
       // let done = await USER.findByIdAndUpdate(id, finalData);
-      let exist = await DEPARTMENT.findOne({ name: request.name });
+      let exist = await Department.findOne({ name: request.name });
       if (exist) {
         return res
           .status(403)
           .send({ message: "This department name is already exists!" });
       }
-      let department = await DEPARTMENT.create(request);
+      let department = await Department.create(request);
       return res.status(201).send({
         status_code: 201,
         department: department,
@@ -49,9 +50,27 @@ export default {
   // Get Departments List
   async getDepartmentList(req, res) {
     try {
-      const departments = await DEPARTMENT.find();
-      return res.status(200).json(departments);
+      const departments = await Department.find();
+      const hodUser = await User.find({ role: "2" });
+      const hodIds = hodUser.map((d) => d._id.toString());
+      const teachers = await Teacher.find({});
+      if (teachers.length > 0) {
+        const filteredA2 = teachers.filter((record) =>
+          hodIds.includes(record.user_id)
+        );
+        const transformedA1 = departments.map((a1Item) => {
+          const matchingA2 = filteredA2.find(
+            (a2Item) => a2Item.department_id === a1Item._id.toString()
+          );
+          return {
+            ...a1Item,
+            hod: matchingA2 ? matchingA2.name : "", // Use A2.name if matched, otherwise keep existing hod
+          };
+        });
+        return res.status(200).json(transformedA1);
+      }
     } catch (err) {
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -60,7 +79,7 @@ export default {
   async deleteDepartment(req, res) {
     try {
       let id = req.query.id;
-      const department = await DEPARTMENT.findByIdAndRemove(id);
+      const department = await Department.findByIdAndRemove(id);
       if (!department) {
         return res.status(404).send({ message: "Department not found." });
       }
@@ -80,11 +99,11 @@ export default {
         return res.send("All input is required!");
       }
       let _id = req.body.id;
-      const department = await DEPARTMENT.findById(_id);
+      const department = await Department.findById(_id);
       if (!department) {
         return res.status(404).send({ message: "Department not found" });
       }
-      await DEPARTMENT.findByIdAndUpdate(_id, request);
+      await Department.findByIdAndUpdate(_id, request);
       return res
         .status(201)
         .send({ message: "Department updated successfully" });
@@ -97,7 +116,7 @@ export default {
   // Get Department By Id
   async getDepartmentById(req, res) {
     try {
-      const department = await DEPARTMENT.findById(req.body.id);
+      const department = await Department.findById(req.body.id);
       return res.status(200).json(department);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });

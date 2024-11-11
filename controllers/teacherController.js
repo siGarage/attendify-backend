@@ -102,7 +102,6 @@ export default {
       }
       let _id = req.body.id;
       const reqTeacher = await Teacher.findById(_id);
-      console.log(reqTeacher);
       if (!reqTeacher) {
         return res.status(404).send({ message: "Teacher not found" });
       }
