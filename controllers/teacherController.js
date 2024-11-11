@@ -102,7 +102,8 @@ export default {
       }
       let _id = req.body.id;
       const teacher = await Teacher.findById(_id);
-      const teacherIds = req.body.map(
+      const teacherlist = await Teacher.findById(_id);
+      const teacherIds = teacherlist.map(
         (d) => d.department_id == req.body.department_id
       );
       console.log(teacherIds);
