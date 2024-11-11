@@ -102,7 +102,7 @@ export default {
       }
       let _id = req.body.id;
       const teacher = await Teacher.findById(_id);
-      const teacherlist = await Teacher.findById(_id);
+      const teacherlist = await Teacher.find({});
       const teacherIds = teacherlist?.filter(
         (d) => d.department_id == req.body.department_id
       );
