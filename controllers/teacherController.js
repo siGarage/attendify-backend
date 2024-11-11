@@ -102,15 +102,24 @@ export default {
       }
       let _id = req.body.id;
       const teacher = await Teacher.findById(_id);
-      const teacherlist = await Teacher.find({});
-      const teacherIds = teacherlist?.filter(
-        (d) => d.department_id == req.body.department_id
-      );
-      console.log(teacherIds);
       if (!teacher) {
         return res.status(404).send({ message: "Teacher not found" });
       }
+      const teachers = await Teacher.find({});
+      const teacherList = teachers?.filter(
+        (d) => d.department_id == req.body.department_id
+      );
+      const teacherUserIds = teacherList.map((d) => d.user_id);
+      const Users = User.find();
       if (req.body.role == "2") {
+        let findUserId = [];
+        teacherUserIds.forEach((tu) => {
+          let theUser = Users.forEach((u) => {
+            tu.user_id == u._id && u.role == "2";
+          });
+          findUserId.push(theUser);
+        });
+        console.log(findUserId);
         const test = await User.findOneAndUpdate(
           { role: "2", _id: req.body.user_id },
           { $set: { role: "3" } },
