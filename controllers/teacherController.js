@@ -111,7 +111,7 @@ export default {
           { $set: { role: "3" } },
           { new: true }
         );
-        console.log(test);
+        console.log(test,'kartik1');
         await Teacher.findByIdAndUpdate(_id, request);
         return res
           .status(201)
@@ -122,7 +122,7 @@ export default {
           { $set: { role: "2" } },
           { new: true }
         );
-        console.log(teast2);
+        console.log(teast2,'kartik2');
         await Teacher.findByIdAndUpdate(_id, request);
         return res
           .status(201)
