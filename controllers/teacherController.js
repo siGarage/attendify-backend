@@ -4,6 +4,7 @@ import Validator from "validatorjs";
 import reply from "../common/reply.js";
 import bcrypt from "bcryptjs";
 import csv from "csvtojson";
+import User from "../models/userModel.js";
 function checkMissingKeys(obj, requiredKeys) {
   const missingKeys = requiredKeys.filter(
     (key) => !obj.hasOwnProperty(key) || obj[key].trim() === ""
@@ -105,8 +106,8 @@ export default {
         return res.status(404).send({ message: "Teacher not found" });
       }
       if (req.body.role == "2") {
-        await Teacher.findOneAndUpdate(
-          { role: "2", department_id: req.body.department_id },
+        await User.findOneAndUpdate(
+          { role: "2", _id: req.body.user_id },
           { $set: { role: "3" } },
           { new: true }
         );
@@ -115,6 +116,11 @@ export default {
           .status(201)
           .send({ teacher: request, message: "Teacher updated successfully" });
       } else {
+        await User.findOneAndUpdate(
+          { _id: req.body.user_id },
+          { $set: { role: "2" } },
+          { new: true }
+        );
         await Teacher.findByIdAndUpdate(_id, request);
         return res
           .status(201)
