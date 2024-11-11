@@ -106,21 +106,23 @@ export default {
         return res.status(404).send({ message: "Teacher not found" });
       }
       if (req.body.role == "2") {
-        await User.findOneAndUpdate(
+        const test=await User.findOneAndUpdate(
           { role: "2", _id: req.body.user_id },
           { $set: { role: "3" } },
           { new: true }
         );
+        console.log(test);
         await Teacher.findByIdAndUpdate(_id, request);
         return res
           .status(201)
           .send({ teacher: request, message: "Teacher updated successfully" });
       } else {
-        await User.findOneAndUpdate(
+        const teast2=await User.findOneAndUpdate(
           { _id: req.body.user_id },
           { $set: { role: "2" } },
           { new: true }
         );
+        console.log(teast2);
         await Teacher.findByIdAndUpdate(_id, request);
         return res
           .status(201)
