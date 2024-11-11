@@ -117,14 +117,14 @@ export default {
             teacherUserIds.includes(record._id.toString()) &&
             record.role === "2"
         );
-        console.log(filteredA2);
         await User.findOneAndUpdate(
           { phone_no: filteredA2[0].phone_no },
           { $set: { role: "3" } },
           { new: true }
         );
+        console.log(teacher);
         await User.findOneAndUpdate(
-          { _id: teacher.user_id },
+          { phone_no: teacher.phone_no },
           { $set: { role: "2" } },
           { new: true }
         );
