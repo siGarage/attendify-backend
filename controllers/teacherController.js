@@ -133,6 +133,7 @@ export default {
           .send({ teacher: request, message: "Teacher updated successfully" });
       }
     } catch (err) {
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
