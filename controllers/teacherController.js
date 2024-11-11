@@ -102,6 +102,7 @@ export default {
       }
       let _id = req.body.id;
       const reqTeacher = await Teacher.findById(_id);
+      console.log(reqTeacher);
       if (!reqTeacher) {
         return res.status(404).send({ message: "Teacher not found" });
       }
@@ -117,12 +118,13 @@ export default {
             teacherUserIds.includes(record._id.toString()) &&
             record.role === "2"
         );
-        await User.findOneAndUpdate(
-          { phone_no: filteredA2[0].phone_no },
-          { $set: { role: "3" } },
-          { new: true }
-        );
-        console.log(reqTeacher);
+        if (filteredA2.length > 0) {
+          await User.findOneAndUpdate(
+            { phone_no: filteredA2[0].phone_no },
+            { $set: { role: "3" } },
+            { new: true }
+          );
+        }
         await User.findOneAndUpdate(
           { phone_no: reqTeacher.phone_no },
           { $set: { role: "2" } },
