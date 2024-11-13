@@ -55,10 +55,10 @@ export default {
       const hodIds = hodUser.map((d) => d._id.toString());
       const teachers = await Teacher.find({});
       if (teachers.length > 0) {
-        const filteredA2 = teachers.filter((record) =>
+        const filteredA2 = teachers?.filter((record) =>
           hodIds.includes(record.user_id)
         );
-        const transformedA1 = departments.map((a1Item) => {
+        const transformedA1 = departments?.map((a1Item) => {
           const matchingA2 = filteredA2.find(
             (a2Item) => a2Item.department_id === a1Item._id.toString()
           );
@@ -70,7 +70,6 @@ export default {
         return res.status(200).json(transformedA1);
       }
     } catch (err) {
-      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
