@@ -63,7 +63,7 @@ export default {
             (a2Item) => a2Item.department_id === a1Item._id.toString()
           );
           return {
-            ...a1Item._doc,
+            ...a1Item,
             hod: matchingA2 ? matchingA2.name : "", // Use A2.name if matched, otherwise keep existing hod
           };
         });
