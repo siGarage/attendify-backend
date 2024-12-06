@@ -16,6 +16,7 @@ import multer from "multer";
 import bodyParser from "body-parser";
 
 import examController from "../controllers/examController.js";
+import LectureController from "../controllers/lectureController.js";
 
 const Router = express.Router({ mergeParams: true });
 Router.use(bodyParser.json());
@@ -449,5 +450,10 @@ Router.get(
   "/getStundentAttendance",
   Authentication,
   MachineController.getStundentAttendance
+);
+Router.post(
+  "/createLecture",
+  Authentication,
+  LectureController.createLecture
 );
 export default Router;
