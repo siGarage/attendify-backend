@@ -66,7 +66,7 @@ export default {
     let { id, date } = req.body;
     console.log(date,id);
     try {
-      let t= await TeacherAttendence.find();
+      let t= await TeacherAttendence.find({a_date:date});
       console.log(t);
       let teacherAttendences = await TeacherAttendence.find({
         a_date: date,
