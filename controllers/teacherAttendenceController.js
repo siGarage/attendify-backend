@@ -65,12 +65,19 @@ export default {
   async fetchSingleTeacherAttendences(req, res) {
     let { id, date } = req.body;
     try {
+      let t = await TeacherAttendence.find({
+        a_date: {
+          $gte: date,
+          $lte: date,
+        },
+      });
+      console.log(t);
       let teacherAttendences = await TeacherAttendence.find({
         a_date: {
           $gte: date,
           $lte: date,
         },
-        teacher_id: id
+        teacher_id: id,
       });
       return res.status(200).json(teacherAttendences);
     } catch (err) {
