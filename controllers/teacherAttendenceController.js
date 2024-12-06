@@ -65,11 +65,13 @@ export default {
   async fetchSingleTeacherAttendences(req, res) {
     let { id, date } = req.body;
     try {
+      const startDate = new Date(date);
+      const endDate = new Date(date);
       console.log(new Date(date));
       let t = await TeacherAttendence.find({
         a_date: {
-          $gte: new Date(date),
-          $lte: new Date(date)
+          $gte: startDate,
+          $lte: endDate,
         },
       });
       console.log(t);
