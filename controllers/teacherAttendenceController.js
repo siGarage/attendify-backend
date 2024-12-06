@@ -63,29 +63,9 @@ export default {
     }
   },
   async fetchSingleTeacherAttendences(req, res) {
-    let { id, date } = req.body;
+    let { date } = req.body;
     try {
-      const targetDate = new Date(date);
-      let t = await TeacherAttendence.find({
-        a_date: {
-          $gte: new Date(
-            targetDate.getFullYear(),
-            targetDate.getMonth(),
-            targetDate.getDate()
-          ),
-          $lt: new Date(
-            targetDate.getFullYear(),
-            targetDate.getMonth(),
-            targetDate.getDate() + 1
-          ),
-        },
-      });
-      console.log(t);
       let teacherAttendences = await TeacherAttendence.find({
-        a_date: {
-          $gte: date,
-          $lte: date,
-        },
         teacher_id: id,
       });
       return res.status(200).json(teacherAttendences);
