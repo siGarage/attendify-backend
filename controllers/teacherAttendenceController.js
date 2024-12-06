@@ -64,17 +64,21 @@ export default {
   },
   async fetchSingleTeacherAttendences(req, res) {
     let { id, date } = req.body;
-    console.log(date);
+    console.log(date,id);
     try {
+      let t= await TeacherAttendence.find();
+      console.log(t);
       let teacherAttendences = await TeacherAttendence.find({
         a_date: date,
         teacher_id: id,
       });
+      console.log(teacherAttendences);
       return res.status(200).json(teacherAttendences);
     } catch (err) {
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
+   
 
   async getTeacherAttendenceList(req, res) {
     const filterQuery = buildFilterQuery(req.body);
