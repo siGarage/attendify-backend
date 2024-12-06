@@ -7,7 +7,7 @@ export default {
   async createLecture(req, res) {
     try {
       let request = req.body;
-      let lecture = await Lecture.create(request);
+      const lecture = await Lecture.insertMany(request);
       return res.status(201).send({
         status_code: 201,
         lecture: lecture,
