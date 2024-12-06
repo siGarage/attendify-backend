@@ -21,6 +21,10 @@ const LectureSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    is_done: {
+      type: Boolean,
+      default: false,
+    },
     end_time: {
       type: String,
       default: null,
