@@ -67,8 +67,8 @@ export default {
     try {
       let t = await TeacherAttendence.find({
         a_date: {
-          $gte: date,
-          $lte: date,
+          $gte: new Date(date),
+          $lte: new Date(date)
         },
       });
       console.log(t);
