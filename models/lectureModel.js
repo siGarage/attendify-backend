@@ -17,6 +17,9 @@ const LectureSchema = new mongoose.Schema(
     type: {
       type: String,
     },
+    roll_no:{
+        type:String,
+    },
     start_time: {
       type: String,
       default: null,
