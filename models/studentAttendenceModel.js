@@ -6,6 +6,10 @@ const StudentAttendenceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    lecture_uid: {
+      type: String,
+      required: true,
+    },
     student_id: {
       type: String,
       required: true,
