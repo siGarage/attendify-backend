@@ -7,15 +7,13 @@ export default {
   async createLectures(req, res) {
     try {
       const lectures = req.body;
-      await Lecture.bulkWrite(lectures.map(l => {
-        return {
-          updateOne: {
-            filter: { uid : l.uid },
-            update: { $set: l },
-            upsert: true
-          }
-        };
-      }));
+      await Lecture.bulkWrite(lectures.map(l => ({
+        updateOne: {
+          filter: { uid : l.uid },
+          update: l,
+          upsert: true
+        }
+      })));
       return res.status(200).send({
         error: false,
         data: lectures.length + " lecture(s) created successfully.",
