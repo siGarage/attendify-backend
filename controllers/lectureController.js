@@ -8,11 +8,9 @@ export default {
     try {
       const lectures = req.body;
       await Lecture.bulkWrite(lectures.map(l => {
-        const id = l._id;
-        delete l._id;
         return {
           updateOne: {
-            filter: { _id : id },
+            filter: { uid : l.uid },
             update: { $set: l },
             upsert: true
           }
