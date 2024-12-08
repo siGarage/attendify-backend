@@ -6,11 +6,21 @@ export default {
   //Course create
   async createLectures(req, res) {
     try {
-      let request = req.body;
-      const lecture = await Lecture.insertMany(request);
+      const lectures = req.body;
+      await Lecture.bulkWrite(lectures.map(l => {
+        const id = l._id;
+        delete l._id;
+        return {
+          updateOne: {
+            filter: { _id : id },
+            update: { $set: l },
+            upsert: true
+          }
+        };
+      }));
       return res.status(200).send({
         error: false,
-        data: "Lecture created successfully.",
+        data: lectures.length + " lecture(s) created successfully.",
       });
     } catch (err) {
       return res.status(200).send({
