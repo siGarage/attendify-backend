@@ -29,10 +29,6 @@ const TeacherAttendenceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    lecture_id: {
-      type: String,
-      required: true,
-    },
     attendance_status: {
       type: String,
       required: true,
