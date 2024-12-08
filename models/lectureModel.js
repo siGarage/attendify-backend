@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const LectureSchema = new mongoose.Schema(
   {
-    client_id: {
+    teacher_id: {
       type: String,
     },
     course_id: {
