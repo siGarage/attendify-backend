@@ -84,6 +84,7 @@ export default {
         ...d,
         name: teachers.find((t) => t._id == d.teacher_id)?.name,
         emp_id: teachers.find((t) => t._id == d.teacher_id)?.emp_id,
+        t_id: teachers.find((t) => t._id == d.teacher_id)?._id,
       }));
       return res.status(200).json(final);
     } catch (err) {
