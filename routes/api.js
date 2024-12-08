@@ -452,8 +452,7 @@ Router.get(
   MachineController.getStundentAttendance
 );
 Router.post(
-  "/createLecture",
-  Authentication,
-  LectureController.createLecture
+  "/createLectures",
+  LectureController.createLectures
 );
 export default Router;

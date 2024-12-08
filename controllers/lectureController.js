@@ -4,17 +4,19 @@ import reply from "../common/reply.js";
 
 export default {
   //Course create
-  async createLecture(req, res) {
+  async createLectures(req, res) {
     try {
       let request = req.body;
       const lecture = await Lecture.insertMany(request);
-      return res.status(201).send({
-        status_code: 201,
-        lecture: lecture,
-        message: "Lecture created successfully.",
+      return res.status(200).send({
+        error: false,
+        data: "Lecture created successfully.",
       });
     } catch (err) {
-      return res.status(500).send({ message: "Internal Server Error" });
+      return res.status(200).send({
+        error: true,
+        message: err.message,
+      });
     }
   },
 
