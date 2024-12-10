@@ -454,5 +454,9 @@ Router.get(
   Authentication,
   MachineController.getStundentAttendance
 );
-Router.post("/createLecture", Authentication, LectureController.createLecture);
+Router.post(
+  "/createLectures",
+  Authentication,
+  LectureController.createLectures
+);
 export default Router;

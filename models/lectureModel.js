@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const LectureSchema = new mongoose.Schema(
   {
-    teacher_id: {
+    uid: { // reference id in the machine
+      type: String,
+    }, teacher_id: {
       type: String,
     },
     course_id: {
