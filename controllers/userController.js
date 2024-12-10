@@ -351,4 +351,36 @@ export default {
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
+  async changePassword(req, res) {
+    let request = req.body;
+    let validation = new Validator(request, {
+      r_password: "required",
+      n_password: "required",
+    });
+    if (validation.fails()) {
+      let err_key = Object.keys(Object.entries(validation.errors)[0][1])[0];
+      return res.json(reply.failed(validation.errors.first(err_key)));
+    }
+    try {
+      let user = await User.findById(request.userId);
+      // IF USER NOT FOUND
+      if (!user) {
+        return res.json(reply.failed("Invalid Data!!"));
+      }
+      const password = bcrypt.compareSync(request.r_password, user.password);
+      //IF PASSWORD INCORRECT
+      if (!password) {
+        return res.json(reply.failed("Recent Password is Incorrect"));
+      }
+      user.password = bcrypt.hashSync(request.n_password);
+      let updated = user.save();
+      if (updated) {
+        await Token.deleteMany({ user_id: request._id });
+        return res.json(reply.success("Password Updated Successfully"));
+      }
+    } catch (err) {
+      return res.json(reply.failed("failed to change password"));
+      //console.log(err);
+    }
+  },
 };

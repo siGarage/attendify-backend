@@ -119,6 +119,8 @@ export default {
   // Get Student Attendence List
   async fetchTodayStudentAttendenceList(req, res) {
     try {
+      let a = await STUDENTATTENDENCE.find();
+      console.log(a);
       let s_date = moment().format("YYYY-MM-DD");
       const result = await STUDENTATTENDENCE.find({
         a_date: s_date,
@@ -163,15 +165,17 @@ export default {
 
   //Get student Attendence by Id
   async fetchSingleStudentAttendences(req, res) {
-    let { id, type, month,year } = req.body;
+    let { id, type, month, year } = req.body;
     try {
       const currentMonth = month;
       const startOfMonth = moment()
-        .month(currentMonth).year(year)
+        .month(currentMonth)
+        .year(year)
         .startOf("month")
         .format("YYYY-MM-DD");
       const endOfMonth = moment()
-        .month(currentMonth).year(year)
+        .month(currentMonth)
+        .year(year)
         .endOf("month")
         .format("YYYY-MM-DD");
       let studentAttendences = await STUDENTATTENDENCE.find({

@@ -46,6 +46,9 @@ Router.delete("/logout", Authentication, UserController.logout);
 //Forgot-Password
 Router.put("/forget-password", UserController.forgetPassword);
 
+//change-Password
+Router.post("/change-password", UserController.changePassword);
+
 //Profile Update
 Router.put("/userProfileUpdate", Authentication, UserController.updateProfile);
 
@@ -451,9 +454,5 @@ Router.get(
   Authentication,
   MachineController.getStundentAttendance
 );
-Router.post(
-  "/createLecture",
-  Authentication,
-  LectureController.createLecture
-);
+Router.post("/createLecture", Authentication, LectureController.createLecture);
 export default Router;
