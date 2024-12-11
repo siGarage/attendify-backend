@@ -150,13 +150,17 @@ export default {
         .findOne({
           machine_id: req.body.machine_id,
         })
-        .sort({ createdAt: -1 });
+        .sort({ a_date: -1 });
       return res.status(200).send({
         role: req.body.role,
         lastUpdate: data?.a_date,
       });
     } catch (error) {
       console.error("Error:", error);
+      return res.status(200).send({
+        role: req.body.role,
+        lastUpdate: null,
+      });
     }
   },
 
