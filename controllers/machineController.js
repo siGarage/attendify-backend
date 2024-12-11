@@ -109,9 +109,16 @@ export default {
         roll_no: students.find((t) => t._id == d.student_id)?.roll_no,
         batch: students.find((t) => t._id == d.student_id)?.batch,
       }));
-      const result = await StudentAttendance.insertMany(final);
+      await StudentAttendance.bulkWrite(final.map(d => ({
+        updateOne: {
+          filter: { student_id: d.student_id, lecture_id: d.lecture_id },
+          update: d,
+          upsert: true
+        }
+      })));
+      // const result = await StudentAttendance.insertMany(final);
       return res.status(200).send({
-        message: `${result.length} records of Student Attendance created successfully`,
+        message: `${final.length} records of Student Attendance synced successfully.`,
       });
     } catch (error) {
       console.error("Error:", error);
@@ -129,9 +136,16 @@ export default {
         ...d,
         emp_id: teachers.find((t) => t._id == d.teacher_id)?.emp_id,
       }));
-      const result = await TeacherAttendance.insertMany(final);
+      await TeacherAttendance.bulkWrite(final.map(d => ({
+        updateOne: {
+          filter: { teacher_id: d.teacher_id, lecture_id: d.lecture_id },
+          update: d,
+          upsert: true
+        }
+      })));
+      // const result = await TeacherAttendance.insertMany(final);
       return res.status(200).send({
-        message: `${result.length} records of Teacher Attendance created successfully`,
+        message: `${final.length} records of Teacher Attendance synced successfully.`,
       });
     } catch (error) {
       console.error("Error:", error);
