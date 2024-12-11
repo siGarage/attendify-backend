@@ -111,7 +111,7 @@ export default {
       }));
       await StudentAttendance.bulkWrite(final.map(d => ({
         updateOne: {
-          filter: { student_id: d.student_id, lecture_id: d.lecture_id },
+          filter: { student_id: d.student_id, lecture_uid: d.lecture_uid },
           update: d,
           upsert: true
         }
@@ -138,7 +138,7 @@ export default {
       }));
       await TeacherAttendance.bulkWrite(final.map(d => ({
         updateOne: {
-          filter: { teacher_id: d.teacher_id, lecture_id: d.lecture_id },
+          filter: { teacher_id: d.teacher_id, lecture_uid: d.lecture_uid },
           update: d,
           upsert: true
         }
