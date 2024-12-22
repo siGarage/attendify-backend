@@ -456,7 +456,6 @@ Router.get(
 );
 Router.post(
   "/createLectures",
-  Authentication,
   LectureController.createLectures
 );
 export default Router;
