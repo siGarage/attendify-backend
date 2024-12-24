@@ -8,7 +8,7 @@ import Student from "../models/studentModel.js";
  * @param {string} input
  * @returns {number[]}
  */
-function parseNumberRanges(input) {
+export function parseNumberRanges(input) {
     const result = [];
 
     // Split the input by commas (with optional spaces)
@@ -49,7 +49,7 @@ function parseNumberRanges(input) {
     }
 
     return result;
-}
+};
 
 export default {
     async processDayLectures(req, res) {
@@ -99,4 +99,4 @@ export default {
             result: `${lectures.length} lecture(s) were processed and ${recordsToCreate.length} record(s) of student attendance were created.`,
         });
     }
-}
+};
