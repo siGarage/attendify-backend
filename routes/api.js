@@ -17,6 +17,8 @@ import bodyParser from "body-parser";
 
 import examController from "../controllers/examController.js";
 import LectureController from "../controllers/lectureController.js";
+import Local from "../middleware/local.js";
+import CronController from "../controllers/cron_controller.js";
 
 const Router = express.Router({ mergeParams: true });
 Router.use(bodyParser.json());
@@ -458,4 +460,10 @@ Router.post(
   "/createLectures",
   LectureController.createLectures
 );
+
+
+// Crons
+
+Router.get('/process-day-lectures', Local, CronController.processDayLectures);
+
 export default Router;
