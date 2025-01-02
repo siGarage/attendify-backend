@@ -91,12 +91,12 @@ export default {
             });
             Lecture.updateOne({ uid: lecture.uid }, { $set: { is_done: true } });
         }));
-        if(recordsToCreate.length > 0) {
+        if (recordsToCreate.length > 0) {
             await StudentAttendence.insertMany(recordsToCreate);
         }
         return res.status(200).send({
             error: false,
-            result: `${lectures.length} lecture(s) were processed and ${recordsToCreate.length} record(s) of student attendance were created.`,
+            result: `[${date}]: ${lectures.length} lecture(s) were processed and ${recordsToCreate.length} record(s) of student attendance were created.`,
         });
     }
 };
