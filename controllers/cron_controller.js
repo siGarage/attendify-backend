@@ -84,19 +84,19 @@ export default {
                         subject_id: lecture.subject_id,
                         semester_id: lecture.semester_id,
                         attendance_status: leaveMarked ? 'Leave' : 'Absent',
-                        a_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                        a_date: date + ' ' + moment().format('HH:mm:ss'),
                         machine_id: 'CRON',
                     });
                 }
             });
             Lecture.updateOne({ uid: lecture.uid }, { $set: { is_done: true } });
         }));
-        if(recordsToCreate.length > 0) {
-            // await StudentAttendence.insertMany(recordsToCreate);
+        if (recordsToCreate.length > 0) {
+            await StudentAttendence.insertMany(recordsToCreate);
         }
         return res.status(200).send({
             error: false,
-            result: `${lectures.length} lecture(s) were processed and ${recordsToCreate.length} record(s) of student attendance were created.`,
+            result: `[${date}]: ${lectures.length} lecture(s) were processed and ${recordsToCreate.length} record(s) of student attendance were created.`,
         });
     }
 };
