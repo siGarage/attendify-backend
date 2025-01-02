@@ -92,7 +92,7 @@ export default {
             Lecture.updateOne({ uid: lecture.uid }, { $set: { is_done: true } });
         }));
         if(recordsToCreate.length > 0) {
-            // await StudentAttendence.insertMany(recordsToCreate);
+            await StudentAttendence.insertMany(recordsToCreate);
         }
         return res.status(200).send({
             error: false,
