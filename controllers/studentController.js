@@ -58,6 +58,8 @@ export default {
         message: "Student created successfully",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
@@ -69,6 +71,8 @@ export default {
       let students = await STUDENT.find({}).sort({ roll_no: -1 });
       return res.status(200).json(students);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -91,6 +95,8 @@ export default {
         });
       }
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -110,6 +116,8 @@ export default {
       await STUDENT.findByIdAndUpdate(_id, request);
       return res.status(201).send({ message: "Student updated successfully" });
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
@@ -121,6 +129,8 @@ export default {
       const student = await STUDENT.findById(req.body.id);
       return res.status(200).json(student);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -220,6 +230,8 @@ export default {
       //     });
       //   });
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
     }
   },

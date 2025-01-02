@@ -34,6 +34,8 @@ export default {
         message: "Group created successfully.",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -44,6 +46,8 @@ export default {
       const groups = await GROUP.find();
       return res.status(200).json(groups);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -60,6 +64,8 @@ export default {
         .status(200)
         .send({ id: id, message: "Group deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -79,6 +85,8 @@ export default {
       await GROUP.findByIdAndUpdate(_id, request);
       return res.status(201).send({ message: "Group updated successfully" });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -89,6 +97,8 @@ export default {
       const group = await GROUP.findById(req.body.id);
       return res.status(200).json(group);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

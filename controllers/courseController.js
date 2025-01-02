@@ -1,6 +1,7 @@
 import COURSE from "../models/courseModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
+import Course from "../models/courseModel.js";
 
 export default {
   //Course create
@@ -20,6 +21,8 @@ export default {
         message: "Course created successfully.",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -30,6 +33,8 @@ export default {
       const courses = await COURSE.find();
       return res.status(200).json(courses);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -42,10 +47,13 @@ export default {
       if (!course) {
         return res.status(404).send({ message: "Course not found." });
       }
+      logger.info("Course is deleted");
       return res
         .status(200)
         .send({ id: id, message: "Course deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -67,6 +75,8 @@ export default {
         .status(201)
         .send({ course_u: request, message: "Course updated successfully" });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -77,6 +87,8 @@ export default {
       const course = await COURSE.findById(req.body.id);
       return res.status(200).json(course);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

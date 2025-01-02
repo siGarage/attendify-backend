@@ -15,6 +15,8 @@ export default {
             let exam = await Exam.create(request);
             return res.status(200).send({ status_code: 200, exam: exam, message: "Exam created successfully." });
         } catch (err) {
+      logger.error(err.stack);
+
             return res.status(400).send({ message: "Something Went Wrong!" })
         }
     },
@@ -26,6 +28,8 @@ export default {
             let exam = await Exam.find();
             return res.status(200).json(exam);
         } catch (err) {
+      logger.error(err.stack);
+
             console.log(err, "error");
             return res.status(400).send({ message: "Unable to fetch exam datails!" })
         }
@@ -36,6 +40,8 @@ export default {
             let exams = await Exam.find({elg_class:req?.params?.elg_class});
             return res.status(200).json(exams);
         } catch (err) {
+      logger.error(err.stack);
+
             console.log(err, "error");
             return res.status(400).send({ message: "Unable to fetch exam datails!" })
         }
@@ -69,6 +75,8 @@ export default {
             return res.status(200).send({ status_code: 200, category: request, message: "Category updated successfully." })
 
         } catch (err) {
+      logger.error(err.stack);
+
             console.log(err);
             return res.status(400).send(err)
         }
@@ -86,6 +94,8 @@ export default {
             }
             return res.status(200).send({ status_code: 200, id: id, message: "Exam deleted successfully." })
         } catch (err) {
+      logger.error(err.stack);
+
             console.log(err);
             return res.status(400).send(err)
         }
@@ -126,6 +136,8 @@ export default {
             }
             return res.status(200).send({ status_code: 200, users: request, message: "Exam updated successfully." });
         } catch (err) {
+      logger.error(err.stack);
+
             console.log(err);
             return res.status(400).send(err)
         }
@@ -158,6 +170,8 @@ export default {
             );
             return res.status(200).send({ status_code: 200, id: id, message: "Category deleted successfully." })
         } catch (err) {
+      logger.error(err.stack);
+
             console.log(err);
             return res.status(400).send(err)
         }
@@ -175,6 +189,8 @@ export default {
             );
             return res.status(200).send({ status_code: 200, id: id, message: "Category restore successfully." })
         } catch (err) {
+      logger.error(err.stack);
+
             console.log(err);
             return res.status(400).send(err)
         }

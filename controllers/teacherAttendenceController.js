@@ -59,6 +59,8 @@ export default {
         message: "Teacher Attendence created successfully",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -70,6 +72,8 @@ export default {
       });
       return res.status(200).json(teacherAttendences);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -88,6 +92,8 @@ export default {
       }));
       return res.status(200).json(final);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -102,10 +108,14 @@ export default {
           .status(404)
           .send({ message: "Teacher Attendence not found." });
       }
+      logger.info("Teacher Attendence is deleted");
+
       return res
         .status(204)
         .send({ id: id, message: "Teacher Attendence deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -129,6 +139,8 @@ export default {
         .status(201)
         .send({ message: "Teacher Attendence updated successfully" });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -139,6 +151,8 @@ export default {
       const teacherAttendence = await TeacherAttendence.findById(req.body.id);
       return res.status(200).json(teacherAttendence);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

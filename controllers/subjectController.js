@@ -30,6 +30,8 @@ export default {
         message: "Subject created successfully.",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -40,6 +42,8 @@ export default {
       const subjects = await SUBJECT.find();
       return res.status(200).json(subjects);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -52,10 +56,13 @@ export default {
       if (!subject) {
         return res.status(404).send({ message: "Subject not found." });
       }
+      logger.info("Subject is deleted");
       return res
         .status(200)
         .send({ id: id, message: "Subject deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -77,6 +84,8 @@ export default {
         .status(201)
         .send({ subject_u: request, message: "Subject updated successfully" });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -87,6 +96,8 @@ export default {
       const subject = await SUBJECT.findById(req.body.id);
       return res.status(200).json(subject);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

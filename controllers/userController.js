@@ -6,6 +6,7 @@ import reply from "../common/reply.js";
 import Token from "../models/tokenModel.js";
 import crypto from "crypto";
 import Mail from "../common/Mail.js";
+import logger from "../logger.js";
 
 function makeid() {
   return crypto.randomBytes(20).toString("hex");
@@ -38,7 +39,7 @@ export default {
       const user = await User.create(request);
       return res.json(reply.success("User Created Successfully!!", user));
     } catch (err) {
-      console.log("err", err);
+      logger.error(err.stack);
       return res.json(reply.failed("Something Went Wrong!"));
     }
   },
@@ -82,6 +83,10 @@ export default {
       );
       await Token.create({ token_id, user_id: user._id });
       const { password, ...responseUser } = user._doc;
+      logger.info(
+        `Login successful for user: User_Id:${user._id}-User_Name:${user.name}`
+      );
+      logger.debug("The is the /userLogin route.");
       return res.json(
         reply.success("You are logged in successfully.", {
           responseUser,
@@ -89,6 +94,8 @@ export default {
         })
       );
     } catch (err) {
+      logger.error(err.stack);
+      logger.debug("The is the /userLogin route.");
       return res.json(reply.failed("Something Went Wrong!"));
     }
   },
@@ -98,8 +105,11 @@ export default {
     try {
       let _id = req.user._id;
       await Token.deleteMany({ user_id: _id });
+      logger.info(`Logout User userId:${_id}`);
+      logger.debug("The is the /logout route.");
       return res.json(reply.success("User logged out successfully!!"));
     } catch (err) {
+      logger.error(err.stack);
       return res.json(reply.failed("Unable to logout!"));
     }
   },
@@ -139,6 +149,7 @@ export default {
         );
       }
     } catch (err) {
+      logger.error(err.stack);
       return res.json(reply.failed("some error occured", err));
     }
   },
@@ -297,6 +308,8 @@ export default {
         }
       }
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(400).send(err);
     }
@@ -333,6 +346,8 @@ export default {
         });
       }
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(400).send(err);
     }
@@ -348,6 +363,8 @@ export default {
       const users = await User.find();
       return res.status(200).json(users);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -379,6 +396,8 @@ export default {
         return res.json(reply.success("Password Updated Successfully"));
       }
     } catch (err) {
+      logger.error(err.stack);
+
       return res.json(reply.failed("failed to change password"));
       //console.log(err);
     }

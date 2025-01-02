@@ -56,6 +56,8 @@ export default {
         message: "Teacher created successfully",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
@@ -67,6 +69,8 @@ export default {
       let students = await Teacher.find();
       return res.status(200).json(students);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -89,6 +93,8 @@ export default {
         });
       }
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -140,6 +146,8 @@ export default {
           .send({ teacher: request, message: "Teacher updated successfully" });
       }
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
@@ -151,6 +159,8 @@ export default {
       const teacher = await Teacher.findById(req.body.id);
       return res.status(200).json(teacher);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -251,6 +261,8 @@ export default {
       //     });
       //   });
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
     }
   },

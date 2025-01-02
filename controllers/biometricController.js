@@ -16,6 +16,8 @@ export default {
             let biometric = await BIOMETRIC.create(request);
             return res.status(201).send({ biometric: biometric, message: "Biometric created successfully." });
         } catch (err) {
+      logger.error(err.stack);
+
             return res.status(500).send({ message: "Internal Server Error" })
         }
     },
@@ -29,6 +31,8 @@ export default {
                 .limit(+(req.params.limit ?? '10'));
             return res.status(200).json(biometrics);
         } catch (err) {
+      logger.error(err.stack);
+
             return res.status(500).send({ message: "Internal Server Error" })
         }
     },
@@ -40,6 +44,8 @@ export default {
             const biometrics = await BIOMETRIC.find();
             return res.status(200).json(biometrics);
         } catch (err) {
+      logger.error(err.stack);
+
             return res.status(500).send({ message: "Internal Server Error" })
         }
     },
@@ -55,6 +61,8 @@ export default {
             }
             return res.status(200).send({ id: id, message: "Biometric deleted successfully." })
         } catch (err) {
+      logger.error(err.stack);
+
             return res.status(500).send({ message: "Internal Server Error" })
         }
     },
@@ -74,6 +82,8 @@ export default {
             await BIOMETRIC.findByIdAndUpdate(_id, request);
             return res.status(201).send({ message: "Biometric updated successfully" });
         } catch (err) {
+      logger.error(err.stack);
+
             return res.status(500).send({ message: "Internal Server Error" });
         }
     },
@@ -84,6 +94,8 @@ export default {
             const biometric = await BIOMETRIC.findById(req.body.id);
             return res.status(200).json(biometric);
         } catch (err) {
+      logger.error(err.stack);
+
             return res.status(500).send({ message: "Internal Server Error" })
         }
     }

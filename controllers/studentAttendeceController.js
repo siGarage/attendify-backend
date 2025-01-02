@@ -63,6 +63,8 @@ export default {
         message: "Student Attendence created successfully",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -112,6 +114,8 @@ export default {
       }
       return res.status(200).json(filteredData);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -127,6 +131,8 @@ export default {
       });
       return res.status(200).json(result);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -159,6 +165,8 @@ export default {
         }
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -188,6 +196,8 @@ export default {
       });
       return res.status(200).json(studentAttendences);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -206,6 +216,8 @@ export default {
         .status(204)
         .send({ id: id, message: "Student Attendence deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -229,6 +241,8 @@ export default {
         .status(201)
         .send({ message: "Student Attendence updated successfully" });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -239,6 +253,8 @@ export default {
       const studentAttendence = await STUDENTATTENDENCE.findById(req.body.id);
       return res.status(200).json(studentAttendence);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -268,6 +284,8 @@ export default {
         }
       );
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

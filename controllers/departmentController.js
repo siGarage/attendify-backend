@@ -42,6 +42,8 @@ export default {
         message: "Department created successfully.",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
@@ -70,6 +72,8 @@ export default {
         return res.status(200).json(transformedA1);
       }
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -82,10 +86,13 @@ export default {
       if (!department) {
         return res.status(404).send({ message: "Department not found." });
       }
+      logger.info("Department is deleted");
       return res
         .status(200)
         .send({ id: id, message: "Department deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -107,6 +114,8 @@ export default {
         .status(201)
         .send({ message: "Department updated successfully" });
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
@@ -118,6 +127,8 @@ export default {
       const department = await Department.findById(req.body.id);
       return res.status(200).json(department);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

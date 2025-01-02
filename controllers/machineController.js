@@ -11,6 +11,7 @@ import TEACHER from "../models/teacherModel.js";
 import reply from "../common/reply.js";
 import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
 import TeacherAttendance from "../models/teacherAttendenceModel.js";
+import logger from "../logger.js";
 function findHighestDate(data) {
   let highestDate = null;
   for (const item of data) {
@@ -65,6 +66,7 @@ export default {
       );
       return res.status(200).json(students);
     } catch (err) {
+      logger.error(err.stack);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -76,6 +78,7 @@ export default {
       );
       return res.status(200).json(subjects);
     } catch (err) {
+      logger.error(err.stack);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -85,6 +88,8 @@ export default {
       let courses = await COURSE.find({}).select("_id name");
       return res.status(200).json(courses);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -95,6 +100,8 @@ export default {
       let phases = await SEMESTER.find({}).select("_id name course_id");
       return res.status(200).json(phases);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -109,19 +116,25 @@ export default {
         roll_no: students.find((t) => t._id == d.student_id)?.roll_no,
         batch: students.find((t) => t._id == d.student_id)?.batch,
       }));
-      await StudentAttendance.bulkWrite(final.map(d => ({
-        updateOne: {
-          filter: { student_id: d.student_id, lecture_uid: d.lecture_uid },
-          update: d,
-          upsert: true
-        }
-      })));
+      await StudentAttendance.bulkWrite(
+        final.map((d) => ({
+          updateOne: {
+            filter: { student_id: d.student_id, lecture_uid: d.lecture_uid },
+            update: d,
+            upsert: true,
+          },
+        }))
+      );
       // const result = await StudentAttendance.insertMany(final);
+      logger.info(
+        "Info:",
+        `${final.length} records of Student Attendance synced successfully.`
+      );
       return res.status(200).send({
         message: `${final.length} records of Student Attendance synced successfully.`,
       });
     } catch (error) {
-      console.error("Error:", error);
+      logger.error(err.stack);
       return res.status(500).send({
         message: error,
       });
@@ -136,19 +149,25 @@ export default {
         ...d,
         emp_id: teachers.find((t) => t._id == d.teacher_id)?.emp_id,
       }));
-      await TeacherAttendance.bulkWrite(final.map(d => ({
-        updateOne: {
-          filter: { teacher_id: d.teacher_id, lecture_uid: d.lecture_uid },
-          update: d,
-          upsert: true
-        }
-      })));
+      await TeacherAttendance.bulkWrite(
+        final.map((d) => ({
+          updateOne: {
+            filter: { teacher_id: d.teacher_id, lecture_uid: d.lecture_uid },
+            update: d,
+            upsert: true,
+          },
+        }))
+      );
       // const result = await TeacherAttendance.insertMany(final);
+      logger.info(
+        "Info:",
+        `${final.length} records of Teacher Attendance synced successfully.`
+      );
       return res.status(200).send({
         message: `${final.length} records of Teacher Attendance synced successfully.`,
       });
     } catch (error) {
-      console.error("Error:", error);
+      logger.error(err.stack);
       return res.status(500).send({
         message: error,
       });
@@ -170,7 +189,7 @@ export default {
         lastUpdate: data?.a_date,
       });
     } catch (error) {
-      console.error("Error:", error);
+      logger.error(err.stack);
       return res.status(200).send({
         role: req.body.role,
         lastUpdate: null,
@@ -181,9 +200,9 @@ export default {
   async createBioMetricData(req, res) {
     try {
       const request = req.body;
-      for(let key of Object.keys(request)) {
-        if(request[key].startsWith('"')) {
-          request[key] = request[key].replace(/^"|"$/g, '');
+      for (let key of Object.keys(request)) {
+        if (request[key].startsWith('"')) {
+          request[key] = request[key].replace(/^"|"$/g, "");
         }
       }
       console.log(request);
@@ -211,7 +230,10 @@ export default {
         message: "Biometric created successfully",
       });
     } catch (err) {
-      return res.status(200).send({ message: "Internal Server Error: " + err.message });
+      logger.error(err.stack);
+      return res
+        .status(200)
+        .send({ message: "Internal Server Error: " + err.message });
     }
   },
   async getTeacherDetails(req, res) {
@@ -242,6 +264,7 @@ export default {
       // console.log(filteredCombinedUserArray);
       return res.status(200).json(filteredCombinedUserArray);
     } catch (err) {
+      logger.error(err.stack);
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
@@ -252,6 +275,8 @@ export default {
       const stundentAttendance = await StudentAttendance.find({});
       return res.status(200).json(stundentAttendance);
     } catch (err) {
+      logger.error(err.stack);
+
       console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }

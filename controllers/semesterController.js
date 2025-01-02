@@ -34,6 +34,8 @@ export default {
         message: "Semester created successfully.",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -44,6 +46,8 @@ export default {
       const semesters = await SEMESTER.find();
       return res.status(200).json(semesters);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -56,10 +60,13 @@ export default {
       if (!semester) {
         return res.status(404).send({ message: "Semester not found." });
       }
+      logger.info("Semester is deleted");
       return res
         .status(200)
         .send({ id: id, message: "Semester deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -82,6 +89,8 @@ export default {
         message: "Semester updated successfully",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -92,6 +101,8 @@ export default {
       const semester = await SEMESTER.findById(req.body.id);
       return res.status(200).json(semester);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

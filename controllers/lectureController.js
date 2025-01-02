@@ -19,6 +19,8 @@ export default {
         data: lectures.length + " lecture(s) created successfully.",
       });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(200).send({
         error: true,
         message: err.message,
@@ -32,6 +34,8 @@ export default {
       const lecture = await Lecture.find();
       return res.status(200).json(lecture);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -44,10 +48,13 @@ export default {
       if (!lecture) {
         return res.status(404).send({ message: "Lecture not found." });
       }
+      logger.info("Lecture is deleted");
       return res
         .status(200)
         .send({ id: id, message: "Lecture deleted successfully." });
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -58,6 +65,8 @@ export default {
       const lecture = await Lecture.findById(req.body.id);
       return res.status(200).json(lecture);
     } catch (err) {
+      logger.error(err.stack);
+
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
