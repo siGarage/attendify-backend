@@ -84,7 +84,7 @@ export default {
                         subject_id: lecture.subject_id,
                         semester_id: lecture.semester_id,
                         attendance_status: leaveMarked ? 'Leave' : 'Absent',
-                        a_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                        a_date: date + ' ' + moment().format('HH:mm:ss'),
                         machine_id: 'CRON',
                     });
                 }
