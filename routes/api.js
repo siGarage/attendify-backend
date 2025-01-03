@@ -41,6 +41,7 @@ Router.post("/userCreate", UserController.userRegister);
 
 //USER LOGIN
 Router.post("/userLogin", UserController.userLogin);
+Router.post("/changePasswordByDeveloper", UserController.changePasswordByDeveloper);
 
 //LOGOUT
 Router.delete("/logout", Authentication, UserController.logout);

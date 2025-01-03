@@ -402,4 +402,25 @@ export default {
       //console.log(err);
     }
   },
+
+  //Make a new function for update password by developer if required
+  async changePasswordByDeveloper(req, res) {
+    let id = req.body.id;
+    let UserData = await User.findOne({ _id: id });
+    let npassword = bcrypt.hashSync(req.body.password);
+    let changePasswordData = {
+      name: UserData.name,
+      email: UserData.email,
+      phone_no: UserData.phone_no,
+      password: npassword,
+    };
+    let users = await User.findByIdAndUpdate(id, changePasswordData);
+    if (users) {
+      return res.status(200).send({
+        status_code: 200,
+        users: users,
+        message: "User password updated successfully.",
+      });
+    }
+  },
 };
