@@ -6,12 +6,13 @@
 .pnp.js
 .env
 .gitignore
+package-lock.json
+app-2025-01-04.log
 # testing
 /coverage
 /images
 
-package-lock.json
-app-2025-01-04.log
+
 # production
 
 

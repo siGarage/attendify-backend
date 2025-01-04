@@ -354,7 +354,7 @@ export default {
 
   async getUserById(req, res) {
     let user = await User.findById(req.user._id).select(
-      "name email phone_no role -password"
+      "name email phone_no role"
     );
     return res.status(200).send({ user });
   },
