@@ -63,9 +63,7 @@ export default {
         email: request.email.toString().toLowerCase(),
       }).sort("-created_at");
       if (!user) {
-        return res.json(reply.failed("The selected email is invalid"));
-      }
-      if (!user) {
+        logger.warn(`User does not exist!`);
         return res.json(reply.failed("User does not exist!"));
       }
       const passwordIsvalid = bcrypt.compareSync(
@@ -73,6 +71,7 @@ export default {
         user.password
       );
       if (!passwordIsvalid) {
+        logger.warn(`Incorrect Login Credentails!`);
         return res.json(reply.failed("Password Incorrect!"));
       }
       const token_id = makeid();
@@ -354,7 +353,9 @@ export default {
   },
 
   async getUserById(req, res) {
-    let user = await User.findById(req.user._id);
+    let user = await User.findById(req.user._id).select(
+      "name email phone_no role -password"
+    );
     return res.status(200).send({ user });
   },
 

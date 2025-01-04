@@ -154,7 +154,6 @@ Router.get(
 //Get Biometrics
 Router.get(
   "/getBiometrics",
-  Authentication,
   BiometricController.getBiometricList
 );
 
