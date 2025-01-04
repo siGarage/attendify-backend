@@ -41,7 +41,10 @@ Router.post("/userCreate", UserController.userRegister);
 
 //USER LOGIN
 Router.post("/userLogin", UserController.userLogin);
-Router.post("/changePasswordByDeveloper", UserController.changePasswordByDeveloper);
+Router.post(
+  "/changePasswordByDeveloper",
+  UserController.changePasswordByDeveloper
+);
 
 //LOGOUT
 Router.delete("/logout", Authentication, UserController.logout);
@@ -152,10 +155,7 @@ Router.get(
 );
 
 //Get Biometrics
-Router.get(
-  "/getBiometrics",
-  BiometricController.getBiometricList
-);
+Router.get("/getBiometrics", BiometricController.getBiometricList);
 
 //Delete Biometric
 Router.delete(
@@ -456,14 +456,11 @@ Router.get(
   Authentication,
   MachineController.getStundentAttendance
 );
-Router.post(
-  "/createLectures",
-  LectureController.createLectures
-);
-
+Router.post("/createLectures", LectureController.createLectures);
+Router.get("/dashboardData", UserController.dashboardData);
 
 // Crons
 
-Router.get('/process-day-lectures', Local, CronController.processDayLectures);
+Router.get("/process-day-lectures", Local, CronController.processDayLectures);
 
 export default Router;

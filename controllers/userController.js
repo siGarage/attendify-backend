@@ -1,4 +1,10 @@
 import User from "../models/userModel.js";
+import Course from "../models/courseModel.js";
+import Subject from "../models/subjectModel.js";
+import Department from "../models/departmentModel.js";
+import Student from "../models/studentModel.js";
+import StudentAttendance from "../models/studentAttendenceModel.js";
+import Teacher from "../models/teacherModel.js";
 import Validator from "validatorjs";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -7,6 +13,7 @@ import Token from "../models/tokenModel.js";
 import crypto from "crypto";
 import Mail from "../common/Mail.js";
 import logger from "../logger.js";
+import moment from "moment";
 
 function makeid() {
   return crypto.randomBytes(20).toString("hex");
@@ -423,5 +430,36 @@ export default {
         message: "User password updated successfully.",
       });
     }
+  },
+  async dashboardData(req, res) {
+    let department = await Department.countDocuments();
+    let course = await Course.countDocuments();
+    let subject = await Subject.countDocuments();
+    let student = await Student.countDocuments();
+    let teacher = await Teacher.countDocuments();
+    const PresentRecords = await StudentAttendance.find({
+      attendance_status: "Present",
+    });
+    const AbsentRecords = await StudentAttendance.find({
+      attendance_status: "Absent",
+    });
+    const today = moment().startOf("day");
+    let todaysPresentRecords = PresentRecords.filter((item) => {
+      const itemDate = moment(item.a_date);
+      return itemDate.isSame(today, "day");
+    });
+    let todaysAbsentRecords = AbsentRecords.filter((item) => {
+      const itemDate = moment(item.a_date);
+      return itemDate.isSame(today, "day");
+    });
+    return res.status(200).json({
+      departmentCount: department,
+      courseCount: course,
+      teacherCount: teacher,
+      studentCount: student,
+      subjectCount: subject,
+      todaysAbsentStudents: todaysAbsentRecords.length,
+      todaysPresentStudents: todaysPresentRecords.length,
+    });
   },
 };
