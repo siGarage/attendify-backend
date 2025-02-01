@@ -1,9 +1,11 @@
 import STUDENTATTENDENCE from "../models/studentAttendenceModel.js";
 import STUDENT from "../models/studentModel.js";
+import Lecture from "../models/lectureModel.js";
 import Validator from "validatorjs";
 import reply from "../common/reply.js";
 import moment from "moment";
 import fs from "fs";
+import exceljs from "exceljs";
 // import { parse } from "csv-parse";
 import csv from "csvtojson";
 function buildFilterQuery(body) {
@@ -26,6 +28,34 @@ function buildFilterQuery(body) {
     }
   }
   return query;
+}
+function generateUUID() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+function mergeArrays(arrA, arrB) {
+  const mergedArray = [];
+
+  for (const itemB of arrB) {
+    const matchingItemA = arrA.find((itemA) => {
+      const dateA = itemA.start_time.split(" ")[0]; // Extract date from start_time
+      return dateA === itemB.a_date; // Compare dates
+    });
+
+    if (matchingItemA) {
+      mergedArray.push({
+        ...itemB, // Spread all properties of itemB
+        uid: matchingItemA.uid, // Add the uid property from itemA
+      });
+    } else {
+      mergedArray.push(itemB); // If no match is found in A, keep the original itemB
+    }
+  }
+
+  return mergedArray;
 }
 export default {
   //Student Attendence create
@@ -70,31 +100,145 @@ export default {
   },
 
   async createStudentAttendenceByCsv(req, res) {
-    var csvData = [];
-    csv()
-      .fromFile(req.file.path)
-      .then(async (jsonObj) => {
-        for (var x = 0; x < jsonObj.length; x++) {
-          const getStudentId = await STUDENT.findOne({
-            roll_no: jsonObj[x]?.roll_no,
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded!" });
+    }
+
+    try {
+      // **REPLACE with your attendance collection name**
+
+      const { Workbook } = exceljs; // Make sure exceljs is required
+      const workbook = new Workbook();
+      await workbook.xlsx.readFile(req.file.path);
+      const worksheet = workbook.getWorksheet(1);
+
+      const attendanceData = [];
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber > 1) {
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            const headerCell = worksheet.getCell(1, colNumber).value;
+            rowData[headerCell] = cell.value;
           });
-          csvData.push({
-            student_id: getStudentId._id,
-            roll_no: jsonObj[x].roll_no,
-            attendance_status: jsonObj[x].attendence_status,
-            a_date: moment(jsonObj[x].a_date).format("YYYY-MM-DD"),
+          attendanceData.push(rowData);
+        }
+      });
+
+      const studentRolls = attendanceData.map((d) => d.roll_no);
+      const students = await STUDENT.find({ roll_no: { $in: studentRolls } });
+
+      const final = attendanceData.map((d) => ({
+        ...d,
+        student_id: students
+          .find((t) => t.roll_no == d.roll_no)
+          ?._id.toString(),
+        batch: students.find((t) => t.roll_no == d.roll_no)?.batch,
+        course_id: req.body.course_id,
+        subject_id: req.body.subject_id,
+        semester_id: req.body.semester_id,
+        type: req.body.type,
+        machine_id: "csv",
+      }));
+
+      const transformedData = [];
+      const lectureData = [];
+
+      for (const record of final) {
+        const {
+          roll_no,
+          name,
+          student_id,
+          batch,
+          machine_id,
+          course_id,
+          subject_id,
+          semester_id,
+          type,
+          ...dates
+        } = record;
+
+        for (const dateString in dates) {
+          const momentDate = moment(dateString);
+
+          if (!momentDate.isValid()) {
+            console.error("Invalid date:", dateString, "for roll_no:", roll_no);
+            continue; // Skip invalid dates
+          }
+
+          const formattedDate = momentDate.format("YYYY-MM-DD");
+
+          transformedData.push({
+            roll_no,
+            name,
+            student_id,
+            course_id,
+            subject_id,
+            semester_id,
+            batch,
+            machine_id,
+            type,
+            a_date: formattedDate,
+            attendance_status: dates[dateString],
+          });
+
+          const uuid = generateUUID();
+          lectureData.push({
+            uid: uuid,
             course_id: req.body.course_id,
-            subject_id: req.body.subject_id,
+            end_time: `${formattedDate} 09:00:00`,
+            is_done: true,
+            roll_no: "", // Review if you need this field
             semester_id: req.body.semester_id,
-            type: req.body.type,
+            start_time: `${formattedDate} 10:00:00`,
+            subject_id: req.body.subject_id,
+            teacher_id: req.body.teacher_id,
+            type: req.body.type, // Add the formatted date to lectureData
           });
         }
-        await STUDENTATTENDENCE.insertMany(csvData);
-        return res.status(201).send({
-          status_code: 201,
-          message: "Student attendence submitted successfully.",
-        });
+      }
+
+      // Bulk write for Lectures (using upsert to avoid duplicates)
+      const lectureOperations = lectureData.map((item) => ({
+        updateOne: {
+          filter: {
+            start_time: item.start_time,
+          }, // Define your unique key
+          update: { $setOnInsert: item },
+          upsert: true,
+        },
+      }));
+      const lectureResult = await Lecture.bulkWrite(lectureOperations);
+      console.log("Lecture bulk write result:", lectureResult);
+      const combinedArray = [];
+      for (const item1 of lectureData) {
+        for (const item2 of transformedData) {
+          if (item1.start_time.split(" ")[0] === item2.a_date) {
+            // Your similarity criteria
+            combinedArray.push({ lecture_uid: item1.uid, ...item2 });
+            break; // Exit inner loop once a match is found
+          }
+        }
+      }
+      const attendanceOperations = combinedArray.map((item) => ({
+        insertOne: { document: item },
+      }));
+
+      const attendanceResult = await STUDENTATTENDENCE.bulkWrite(
+        attendanceOperations
+      );
+      console.log("Attendance bulk write result:", attendanceResult);
+
+      return res.status(200).json({
+        message: `File uploaded and processed. Lectures: ${lectureResult.insertedCount} inserted, Attendance: ${attendanceResult.insertedCount} inserted.`,
+        lectureResult,
+        attendanceResult,
       });
+    } catch (error) {
+      console.error("Error processing CSV:", error);
+      return res
+        .status(500)
+        .json({ message: "Error processing file", error: error.message });
+    }
   },
 
   // Get Student Attendence List
@@ -115,7 +259,6 @@ export default {
       return res.status(200).json(filteredData);
     } catch (err) {
       logger.error(err.stack);
-
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },
@@ -132,7 +275,7 @@ export default {
       return res.status(200).json(result);
     } catch (err) {
       logger.error(err.stack);
-
+      console.log(err);
       return res.status(500).send({ message: "Internal Server Error" });
     }
   },

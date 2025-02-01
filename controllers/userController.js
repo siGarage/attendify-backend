@@ -448,6 +448,7 @@ export default {
       const itemDate = moment(item.a_date);
       return itemDate.isSame(today, "day");
     });
+    console.log(todaysPresentRecords);
     let todaysAbsentRecords = AbsentRecords.filter((item) => {
       const itemDate = moment(item.a_date);
       return itemDate.isSame(today, "day");

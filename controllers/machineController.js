@@ -12,51 +12,6 @@ import reply from "../common/reply.js";
 import LastUpdatedAttendance from "../models/lastUpdateAttendanceModel.js";
 import TeacherAttendance from "../models/teacherAttendenceModel.js";
 import logger from "../logger.js";
-function findHighestDate(data) {
-  let highestDate = null;
-  for (const item of data) {
-    const date = item.a_date;
-    if (!highestDate || date > highestDate) {
-      highestDate = date;
-    }
-  }
-  return highestDate;
-}
-function mergeArrays(filteredData, bios) {
-  const mergedArray = [];
-  filteredData.forEach(async (attendance) => {
-    const matchingTeacher = bios.find(
-      (teacher) => teacher?._id.toHexString() === attendance?.student_id
-    );
-    if (matchingTeacher) {
-      mergedArray.push({
-        ...attendance,
-        roll_no: matchingTeacher?._doc?.roll_no,
-        batch: matchingTeacher?._doc?.batch,
-      });
-    } else {
-      mergedArray.push(attendance);
-    }
-  });
-  return mergedArray;
-}
-function mergeTArrays(bodyData, teachers) {
-  const mergedArray = [];
-  bodyData?.forEach(async (attendance) => {
-    const matchingTeacher = teachers.find(
-      (teacher) => teacher?._id?.toHexString() === attendance?.teacher_id
-    );
-    if (matchingTeacher) {
-      mergedArray.push({
-        ...attendance,
-        emp_id: matchingTeacher?.emp_id,
-      });
-    } else {
-      mergedArray.push(attendance);
-    }
-  });
-  return mergedArray;
-}
 export default {
   // Get Student List
   async fetchStudentsData(req, res) {
