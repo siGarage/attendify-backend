@@ -36,6 +36,30 @@ function generateUUID() {
     return v.toString(16);
   });
 }
+function mergeDataByTimeAndDateEfficient(lectures, attendance) {
+  const lectureMap = new Map();
+
+  for (const lecture of lectures) {
+    const lectureStartTime = lecture.start_time.slice(0, 10);
+    lectureMap.set(lectureStartTime, lecture);
+  }
+
+  const mergedArray = [];
+
+  for (const record of attendance) {
+    const recordDate = record.a_date;
+    const matchingLecture = lectureMap.get(recordDate);
+    if (matchingLecture) {
+      mergedArray.push({
+        ...record,
+        lecture_uid: matchingLecture.uid,
+        // ...matchingLecture,
+      });
+    }
+  }
+
+  return mergedArray;
+}
 function mergeArrays(arrA, arrB) {
   const mergedArray = [];
 
@@ -106,7 +130,6 @@ export default {
 
     try {
       // **REPLACE with your attendance collection name**
-
       const { Workbook } = exceljs; // Make sure exceljs is required
       const workbook = new Workbook();
       await workbook.xlsx.readFile(req.file.path);
@@ -123,7 +146,6 @@ export default {
           attendanceData.push(rowData);
         }
       });
-
       const studentRolls = attendanceData.map((d) => d.roll_no);
       const students = await STUDENT.find({ roll_no: { $in: studentRolls } });
 
@@ -142,7 +164,6 @@ export default {
 
       const transformedData = [];
       const lectureData = [];
-
       for (const record of final) {
         const {
           roll_no,
@@ -178,7 +199,7 @@ export default {
             machine_id,
             type,
             a_date: formattedDate,
-            attendance_status: dates[dateString],
+            attendance_status: dates[dateString]=="P"?"Present":"Absent",
           });
 
           const uuid = generateUUID();
@@ -208,18 +229,13 @@ export default {
         },
       }));
       const lectureResult = await Lecture.bulkWrite(lectureOperations);
+      const lectureNData = await Lecture.find();
       console.log("Lecture bulk write result:", lectureResult);
-      const combinedArray = [];
-      for (const item1 of lectureData) {
-        for (const item2 of transformedData) {
-          if (item1.start_time.split(" ")[0] === item2.a_date) {
-            // Your similarity criteria
-            combinedArray.push({ lecture_uid: item1.uid, ...item2 });
-            break; // Exit inner loop once a match is found
-          }
-        }
-      }
-      const attendanceOperations = combinedArray.map((item) => ({
+      const mergedDataEfficiently = mergeDataByTimeAndDateEfficient(
+        lectureNData,
+        transformedData
+      );
+      const attendanceOperations = mergedDataEfficiently.map((item) => ({
         insertOne: { document: item },
       }));
 
